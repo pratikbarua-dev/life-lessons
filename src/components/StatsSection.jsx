@@ -12,6 +12,13 @@ const STATS = [
   { value: 85, suffix: "+", label: "Countries" },
 ];
 
+// Custom easing - ease out expo
+const easeOutExpo = (t, b, c, d) => {
+  return t === d
+    ? b + c
+    : c * (-Math.pow(2, (-10 * t) / d) + 1) + b;
+};
+
 export default function StatsSection() {
   const { ref, inView } = useInView({
     triggerOnce: true,
@@ -54,12 +61,7 @@ export default function StatsSection() {
                       duration={2.5}
                       separator=","
                       suffix={stat.suffix}
-                      easingFn={(t, b, c, d) => {
-                        // Custom easing - ease out expo
-                        return t === d
-                          ? b + c
-                          : c * (-Math.pow(2, (-10 * t) / d) + 1) + b;
-                      }}
+                      easingFn={easeOutExpo}
                     />
                   ) : (
                     <span>0{stat.suffix}</span>

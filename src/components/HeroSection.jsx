@@ -4,13 +4,14 @@ import {
   motion,
   useScroll,
   useTransform,
+  useMotionValue,
   AnimatePresence,
-  useReducedMotion,
 } from "framer-motion";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useRef, useState, useEffect, useCallback } from "react";
 import FloatingElements from "./FloatingElements";
+import usePrefersReducedMotion from "@/hooks/usePrefersReducedMotion";
 
 const HERO_SLIDES = [
   {
@@ -57,10 +58,11 @@ export default function HeroSection() {
   const targetRef = useRef(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
   const [keywordIndex, setKeywordIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     setMounted(true);
@@ -85,6 +87,12 @@ export default function HeroSection() {
     return () => clearInterval(interval);
   }, [shouldAnimate]);
 
+  // Map motion values for parallax effects
+  const bgX = useTransform(mouseX, (v) => (shouldAnimate ? v * -5 : 0));
+  const bgY = useTransform(mouseY, (v) => (shouldAnimate ? v * -5 : 0));
+  const contentX = useTransform(mouseX, (v) => (shouldAnimate ? v * 2 : 0));
+  const contentY = useTransform(mouseY, (v) => (shouldAnimate ? v * 2 : 0));
+
   // Mouse parallax handler
   const handleMouseMove = useCallback(
     (e) => {
@@ -92,9 +100,10 @@ export default function HeroSection() {
       const rect = e.currentTarget.getBoundingClientRect();
       const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
       const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-      setMousePosition({ x, y });
+      mouseX.set(x);
+      mouseY.set(y);
     },
-    [shouldAnimate]
+    [shouldAnimate, mouseX, mouseY]
   );
 
   const handleNext = () => {
@@ -148,8 +157,8 @@ export default function HeroSection() {
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             style={{
               backgroundImage: `url('${slide.bgImage}')`,
-              x: shouldAnimate ? mousePosition.x * -5 : 0,
-              y: shouldAnimate ? mousePosition.y * -5 : 0,
+              x: bgX,
+              y: bgY,
             }}
             className="absolute inset-[-10px] sm:inset-[-20px] bg-cover bg-center grayscale opacity-15 sm:opacity-20 will-change-transform"
           />
@@ -187,8 +196,8 @@ export default function HeroSection() {
       <motion.div
         className="relative z-10 w-full px-4 sm:px-8 max-w-7xl mx-auto mb-12 sm:mb-0"
         style={{
-          x: shouldAnimate ? mousePosition.x * 2 : 0,
-          y: shouldAnimate ? mousePosition.y * 2 : 0,
+          x: contentX,
+          y: contentY,
         }}
       >
         <motion.div

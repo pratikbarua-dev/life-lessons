@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useReducedMotion } from "framer-motion";
+import usePrefersReducedMotion from "@/hooks/usePrefersReducedMotion";
 
 /**
  * Lightweight floating decorative elements using pure CSS animations
@@ -34,7 +34,7 @@ function StarShape({ size }) {
 
 export default function FloatingElements() {
   const [mounted, setMounted] = useState(false);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     setMounted(true);
