@@ -1,15 +1,16 @@
-import HeroSection from "@/components/HeroSection";
+import CallToAction from "@/components/CallToAction";
 import FeaturedLessons from "@/components/FeaturedLessons";
+import HeroSection from "@/components/HeroSection";
+import MostSavedLessons from "@/components/MostSavedLessons";
 import ReflectionFeatures from "@/components/ReflectionFeatures";
 import TopContributors from "@/components/TopContributors";
-import MostSavedLessons from "@/components/MostSavedLessons";
-import CallToAction from "@/components/CallToAction";
 import StatsSection from "@/components/StatsSection";
 import SectionDivider from "@/components/SectionDivider";
+import React from "react";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <main className="pt-16">
+    <>
       <HeroSection />
       <StatsSection />
       <SectionDivider />
@@ -22,6 +23,6 @@ export default function Home() {
       <MostSavedLessons />
       <SectionDivider />
       <CallToAction />
-    </main>
+    </>
   );
 }
