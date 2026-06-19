@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 
 /**
@@ -32,9 +33,14 @@ function StarShape({ size }) {
 }
 
 export default function FloatingElements() {
+  const [mounted, setMounted] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
-  if (prefersReducedMotion) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || prefersReducedMotion) return null;
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">

@@ -6,6 +6,7 @@ export default function MouseGlow() {
   const glowRef = useRef(null);
   const [isTouch, setIsTouch] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const mousePos = useRef({ x: 0, y: 0 });
   const currentPos = useRef({ x: 0, y: 0 });
   const rafId = useRef(null);
@@ -15,6 +16,7 @@ export default function MouseGlow() {
     setReducedMotion(
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     );
+    setMounted(true);
   }, []);
 
   useEffect(() => {
@@ -49,7 +51,7 @@ export default function MouseGlow() {
     };
   }, [isTouch, reducedMotion]);
 
-  if (isTouch || reducedMotion) return null;
+  if (!mounted || isTouch || reducedMotion) return null;
 
   return (
     <div
