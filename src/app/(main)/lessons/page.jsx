@@ -1,12 +1,13 @@
-import LessonsGrid from "@/components/lessons/LessonsGrid";
-import LessonsHeader from "@/components/lessons/LessonsSearch";
-import React from "react";
+import { LessonsPageHeader, LessonsSearchFilters, LessonsGrid } from "@/components/lessons";
 
 export default function LessonsPage() {
   return (
     <>
-      <LessonsHeader></LessonsHeader>
-      <LessonsGrid></LessonsGrid>
+      <LessonsPageHeader />
+      <div className="px-gutter pb-8">
+        <LessonsSearchFilters variant="public" placeholder="Search lessons..." />
+      </div>
+      <LessonsGrid />
     </>
   );
 }

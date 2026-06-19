@@ -1,4 +1,5 @@
 import SidebarLink from "./SidebarLink";
+import UpgradePlanCard from "@/components/lessons/UpgradePlanCard";
 
 const MENU_GROUPS = [
     {
@@ -43,6 +44,9 @@ export default function Sidebar() {
                     </div>
                 ))}
             </div>
+
+            {/* Upgrade CTA pinned to sidebar bottom */}
+            <UpgradePlanCard />
         </aside>
     );
 }
