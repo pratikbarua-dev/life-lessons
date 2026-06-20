@@ -37,7 +37,10 @@ export default function FloatingElements() {
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => {
+      setMounted(true);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   if (!mounted || prefersReducedMotion) return null;

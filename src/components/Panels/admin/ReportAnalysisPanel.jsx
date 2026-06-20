@@ -57,10 +57,10 @@ export default function ReportAnalysisPanel() {
                     </h4>
                     <div className="space-y-3">
                         <div className="bg-white/[0.02] border border-white/5 p-3 rounded-xl text-xs font-sans font-light leading-relaxed">
-                            <span className="text-[#c3c0ff] font-medium">@reader_alpha:</span> "Section 3 uses highly inflammatory language targeting a specific demographic under the guise of 'Stoicism'."
+                            <span className="text-[#c3c0ff] font-medium">@reader_alpha:</span> &ldquo;Section 3 uses highly inflammatory language targeting a specific demographic under the guise of &lsquo;Stoicism&rsquo;.&rdquo;
                         </div>
                         <div className="bg-white/[0.02] border border-white/5 p-3 rounded-xl text-xs font-sans font-light leading-relaxed">
-                            <span className="text-[#c3c0ff] font-medium">@safety_first:</span> "The metaphors used in the conclusion are dog-whistles for extremist ideologies."
+                            <span className="text-[#c3c0ff] font-medium">@safety_first:</span> &ldquo;The metaphors used in the conclusion are dog-whistles for extremist ideologies.&rdquo;
                         </div>
                     </div>
                 </div>
@@ -100,7 +100,7 @@ export default function ReportAnalysisPanel() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 flex flex-col justify-end">
                         <p className="text-sm font-serif italic text-white font-semibold">
-                            "Integrity is the bedrock of insight."
+                            &ldquo;Integrity is the bedrock of insight.&rdquo;
                         </p>
                         <span className="text-[10px] font-sans tracking-wider text-[#c7c4d8]/40 mt-1 block">
                             — Editorial Manifesto

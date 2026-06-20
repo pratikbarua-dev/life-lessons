@@ -12,11 +12,16 @@ export default function MouseGlow() {
   const rafId = useRef(null);
 
   useEffect(() => {
-    setIsTouch("ontouchstart" in window || navigator.maxTouchPoints > 0);
-    setReducedMotion(
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    );
-    setMounted(true);
+    const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const timer = setTimeout(() => {
+      setIsTouch(isTouchDevice);
+      setReducedMotion(prefersReduced);
+      setMounted(true);
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {

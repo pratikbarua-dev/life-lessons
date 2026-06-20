@@ -1,365 +1,258 @@
 "use client";
 
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useMotionValue,
-  AnimatePresence,
-} from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useRef, useState, useEffect, useCallback } from "react";
-import FloatingElements from "./FloatingElements";
-import usePrefersReducedMotion from "@/hooks/usePrefersReducedMotion";
+import { useState, useEffect } from "react";
+import GooglyEyes from "./GooglyEyes";
+import PenMascot from "./PenMascot";
 
 const HERO_SLIDES = [
   {
     id: 1,
-    badge: "Premium Edition",
-    title: "Preserve Your",
-    keyword: "Wisdom",
+    badge: "premium wisdom edition",
+    emoji: "🎯",
+    title: "preserve your",
+    keyword: "wisdom",
     description:
       "Your experiences are the blueprints for the next generation. Document, reflect, and share the lessons that truly matter in a space designed for depth.",
-    bgImage:
-      "https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=1920&auto=format&fit=crop",
-    primaryCta: { text: "Start Writing", href: "/write" },
-    secondaryCta: { text: "Explore Archives", href: "/archives" },
+    primaryCta: { text: "start writing", href: "/add-lesson" },
+    secondaryCta: { text: "explore archives", href: "/lessons" },
   },
   {
     id: 2,
-    badge: "Digital Archives",
-    title: "Curate Your",
-    keyword: "Legacy",
+    badge: "secure digital archives",
+    emoji: "📁",
+    title: "curate your own",
+    keyword: "legacy",
     description:
       "Build an organized collection of insights and personal milestones. Securely store your life's most valuable lessons in a digital vault.",
-    bgImage:
-      "https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=1920&auto=format&fit=crop",
-    primaryCta: { text: "Create Vault", href: "/vault" },
-    secondaryCta: { text: "View Showcase", href: "/showcase" },
+    primaryCta: { text: "create vault", href: "/add-lesson" },
+    secondaryCta: { text: "view showcase", href: "/lessons" },
   },
   {
     id: 3,
-    badge: "Shared Insights",
-    title: "Pass Down",
-    keyword: "Lessons",
+    badge: "collaborative insights",
+    emoji: "🤝",
+    title: "pass down key",
+    keyword: "lessons",
     description:
       "Connect with readers looking for depth over noise. Identify patterns in your decision-making and accelerate your personal evolution.",
-    bgImage:
-      "https://images.unsplash.com/photo-1516979187457-637abb4f9353?q=80&w=1920&auto=format&fit=crop",
-    primaryCta: { text: "Join Circle", href: "/join" },
-    secondaryCta: { text: "Read Letters", href: "/letters" },
+    primaryCta: { text: "join circle", href: "/add-lesson" },
+    secondaryCta: { text: "read letters", href: "/lessons" },
   },
 ];
 
-const ROTATING_KEYWORDS = ["Wisdom", "Legacy", "Story", "Experience", "Journey"];
-
 export default function HeroSection() {
-  const targetRef = useRef(null);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [direction, setDirection] = useState(0);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const [keywordIndex, setKeywordIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const [typedKeyword, setTypedKeyword] = useState("");
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => {
+      setMounted(true);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
-  const shouldAnimate = mounted && !prefersReducedMotion;
+  const slide = HERO_SLIDES[currentSlide];
 
-  const { scrollYProgress } = useScroll({
-    target: targetRef,
-    offset: ["start start", "end start"],
-  });
-
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.06]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.1]);
-
-  // Rotating keyword animation
+  // Typewriter effect for slide keyword
   useEffect(() => {
-    if (!shouldAnimate) return;
-    const interval = setInterval(() => {
-      setKeywordIndex((prev) => (prev + 1) % ROTATING_KEYWORDS.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [shouldAnimate]);
+    let active = true;
+    let currentText = "";
+    let i = 0;
+    const targetText = slide.keyword;
 
-  // Map motion values for parallax effects
-  const bgX = useTransform(mouseX, (v) => (shouldAnimate ? v * -5 : 0));
-  const bgY = useTransform(mouseY, (v) => (shouldAnimate ? v * -5 : 0));
-  const contentX = useTransform(mouseX, (v) => (shouldAnimate ? v * 2 : 0));
-  const contentY = useTransform(mouseY, (v) => (shouldAnimate ? v * 2 : 0));
+    const startTimeout = setTimeout(() => {
+      if (!active) return;
+      setTypedKeyword("");
 
-  // Mouse parallax handler
-  const handleMouseMove = useCallback(
-    (e) => {
-      if (!shouldAnimate || window.innerWidth < 1024) return; // Disable parallax on tablet/mobile touch screens
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-      const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-      mouseX.set(x);
-      mouseY.set(y);
-    },
-    [shouldAnimate, mouseX, mouseY]
-  );
+      const typeChar = () => {
+        if (!active) return;
+        if (i < targetText.length) {
+          currentText += targetText[i];
+          setTypedKeyword(currentText);
+          i++;
+          setTimeout(typeChar, 60 + Math.random() * 80);
+        }
+      };
+
+      typeChar();
+    }, 150);
+
+    return () => {
+      active = false;
+      clearTimeout(startTimeout);
+    };
+  }, [slide.keyword]);
 
   const handleNext = () => {
-    setDirection(1);
     setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
   };
 
   const handlePrev = () => {
-    setDirection(-1);
     setCurrentSlide(
       (prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length
     );
   };
 
-  const slide = HERO_SLIDES[currentSlide];
-
-  const slideVariants = {
-    enter: (dir) => ({
-      x: dir > 0 ? "100%" : "-100%",
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (dir) => ({
-      x: dir < 0 ? "100%" : "-100%",
-      opacity: 0,
-    }),
-  };
-
   return (
-    <section
-      ref={targetRef}
-      onMouseMove={handleMouseMove}
-      className="relative min-h-[100vh] lg:min-h-[850px] w-full flex items-center overflow-hidden py-24 sm:py-32"
-    >
-      {/* Background Image Layer with cinematic animation & parallax */}
-      <motion.div 
-        style={{ scale, opacity }}
-        className="absolute inset-0 z-0 select-none pointer-events-none overflow-hidden"
-      >
-        <AnimatePresence initial={false} custom={direction}>
-          <motion.div
-            key={currentSlide}
-            custom={direction}
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            style={{
-              backgroundImage: `url('${slide.bgImage}')`,
-              x: bgX,
-              y: bgY,
-            }}
-            className="absolute inset-[-10px] sm:inset-[-20px] bg-cover bg-center grayscale opacity-15 sm:opacity-20 will-change-transform"
-          />
-        </AnimatePresence>
+    <section className="relative min-h-screen w-full flex items-center bg-[#F6F0DD] dot-grid text-[#1C1611] pt-32 sm:pt-36 pb-16 overflow-hidden border-b-[3.5px] border-[#1C1611]">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        {/* Left Column - Value Proposition */}
+        <div className="lg:col-span-7 flex flex-col justify-center space-y-6 text-left">
+          
+          {/* Badge Tagline with Emoji context */}
+          <div className="flex items-center gap-2">
+            <span className="font-handwritten text-xl sm:text-2xl text-[#FF4A3A] font-bold">
+              {slide.emoji} {slide.badge}
+            </span>
+          </div>
 
-        {/* Dark gradient overlay */}
-        <div className="absolute inset-0 bg-neutral-950/85 sm:bg-neutral-950/80 pointer-events-none" />
+          {/* Heading with Wavy Underline */}
+          <h1 className="text-4xl sm:text-6xl font-black tracking-tight leading-[1.1] text-[#1C1611] uppercase">
+            {slide.title}
+            <span className="text-[#FF4A3A] wavy-underline block mt-2">
+              {typedKeyword}
+              <span className="inline-block animate-[pulse_1s_infinite] ml-1 text-[#FF4A3A]">|</span>
+            </span>
+          </h1>
 
-        {/* Radial lighting effect */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse at center, rgba(195, 192, 255, 0.04) 0%, transparent 70%), radial-gradient(ellipse at 20% 50%, rgba(195, 192, 255, 0.06) 0%, transparent 50%)",
-          }}
-          aria-hidden="true"
-        />
+          {/* Body Text */}
+          <p className="text-base sm:text-lg md:text-xl text-[#1C1611] leading-relaxed max-w-xl font-medium">
+            {slide.description}
+          </p>
 
-        {/* Noise/grain overlay */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.02] sm:opacity-[0.03]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-          }}
-          aria-hidden="true"
-        />
-      </motion.div>
-
-      {/* Floating Decorative Elements - Hidden on mobile for performance */}
-      <div className="hidden sm:block">
-        <FloatingElements />
-      </div>
-
-      {/* Main Interactive Content Area wrapped in a Premium Glass Panel */}
-      <motion.div
-        className="relative z-10 w-full px-4 sm:px-8 max-w-7xl mx-auto mb-12 sm:mb-0"
-        style={{
-          x: contentX,
-          y: contentY,
-        }}
-      >
-        <motion.div
-          className="max-w-2xl p-6 sm:p-10 rounded-2xl sm:rounded-3xl relative overflow-hidden group/card"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          whileHover={
-            shouldAnimate
-              ? {
-                y: -2,
-                scale: 1.005,
-                transition: { duration: 0.3 },
-              }
-              : {}
-          }
-          style={{
-            background: "rgba(10, 10, 10, 0.55)",
-            backdropFilter: "blur(16px)",
-            WebkitBackdropFilter: "blur(16px)",
-            border: "1px solid rgba(255, 255, 255, 0.06)",
-            boxShadow:
-              "0 12px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05)",
-          }}
-        >
-          {/* Ambient glow behind card */}
-          <div
-            className="absolute -inset-1 rounded-3xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 -z-10 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(400px circle at 50% 50%, rgba(195, 192, 255, 0.05), transparent 60%)",
-            }}
-            aria-hidden="true"
-          />
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentSlide}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
+          {/* Action Button CTAs */}
+          <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            {/* Primary Action Button */}
+            <Link
+              href={slide.primaryCta.href}
+              className="bg-[#FF4A3A] text-[#1C1611] font-black uppercase text-center px-8 py-4 rounded-full border-[3px] border-[#1C1611] shadow-[4px_4px_0px_0px_#1C1611] hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-[2.5px_2.5px_0px_0px_#1C1611] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 flex items-center justify-center gap-2"
             >
-              {/* Badge */}
-              <motion.span
-                className="inline-block px-3 py-1 bg-primary/15 text-primary text-xs font-semibold rounded-full mb-4 sm:mb-6 border border-primary/20 uppercase tracking-widest"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                {slide.badge}
-              </motion.span>
+              <span>{slide.primaryCta.text}</span>
+              <ArrowRight className="w-5 h-5 stroke-[2.5px]" />
+            </Link>
 
-              {/* Title Header with rotating keyword */}
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 sm:mb-6 text-white leading-[1.15] min-h-[2.4em] sm:min-h-[auto]">
-                {slide.title}
-                <br />
-                <span className="relative inline-block mt-1 min-w-[180px] sm:min-w-[auto]">
-                  <AnimatePresence mode="wait">
-                    {shouldAnimate ? (
-                      <motion.span
-                        key={ROTATING_KEYWORDS[keywordIndex]}
-                        initial={{ opacity: 0, y: 15, filter: "blur(4px)" }}
-                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                        exit={{ opacity: 0, y: -15, filter: "blur(4px)" }}
-                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                        className="text-primary inline-block font-extrabold"
-                      >
-                        {ROTATING_KEYWORDS[keywordIndex]}
-                      </motion.span>
-                    ) : (
-                      <span className="text-primary inline-block font-extrabold">
-                        {ROTATING_KEYWORDS[0]}
-                      </span>
-                    )}
-                  </AnimatePresence>
-                  {/* Underline accent */}
-                  <span className="absolute -bottom-1 left-0 right-0 h-[2px] bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
-                </span>
-              </h1>
+            {/* Secondary Action Button */}
+            <Link
+              href={slide.secondaryCta.href}
+              className="bg-transparent text-[#1C1611] font-extrabold uppercase text-center px-8 py-4 rounded-full border-[3px] border-[#1C1611] hover:bg-[#1C1611]/5 active:translate-y-[1px] transition-all duration-100 flex items-center justify-center gap-2"
+            >
+              <span>{slide.secondaryCta.text}</span>
+            </Link>
+          </div>
 
-              {/* Body Text */}
-              <p className="text-sm sm:text-base md:text-lg text-neutral-400 mb-8 sm:mb-10 leading-relaxed min-h-[72px] sm:min-h-[84px]">
-                {slide.description}
-              </p>
+          {/* Slides Carousel Controls */}
+          <div className="flex items-center gap-4 pt-6">
+            <button
+              onClick={handlePrev}
+              className="w-12 h-12 rounded-full border-[3px] border-[#1C1611] bg-white text-[#1C1611] hover:bg-[#FFB3A7] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[3px_3px_0px_0px_#1C1611] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[0px_0px_0px_0px_#1C1611] flex items-center justify-center transition-all duration-100"
+              aria-label="Previous slide"
+            >
+              <ArrowLeft className="w-5 h-5 stroke-[2.5px]" />
+            </button>
+            <div className="flex items-center gap-2">
+              {HERO_SLIDES.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentSlide(idx)}
+                  className={`w-3.5 h-3.5 rounded-full border-2 border-[#1C1611] transition-all duration-150 ${
+                    idx === currentSlide ? "bg-[#FF4A3A] scale-110" : "bg-white"
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
+            </div>
+            <button
+              onClick={handleNext}
+              className="w-12 h-12 rounded-full border-[3px] border-[#1C1611] bg-white text-[#1C1611] hover:bg-[#FFB3A7] hover:translate-x-[1px] hover:translate-y-[-1px] hover:shadow-[3px_3px_0px_0px_#1C1611] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[0px_0px_0px_0px_#1C1611] flex items-center justify-center transition-all duration-100"
+              aria-label="Next slide"
+            >
+              <ArrowRight className="w-5 h-5 stroke-[2.5px]" />
+            </button>
+          </div>
+        </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3.5 sm:gap-4">
-                {/* Primary CTA */}
-                <Link
-                  href={slide.primaryCta.href}
-                  className="relative overflow-hidden bg-primary text-on-primary px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-medium hover:shadow-2xl hover:shadow-primary/40 sm:hover:-translate-y-0.5 transition-all duration-300 text-center group/btn flex items-center justify-center gap-2"
-                >
-                  <span className="relative z-10 flex items-center gap-2 text-sm sm:text-base">
-                    {slide.primaryCta.text}
-                    <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
-                  </span>
-                  <span
-                    className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700"
-                    style={{
-                      background:
-                        "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)",
-                    }}
-                  />
-                </Link>
+        {/* Right Column - Visual Product Simulation Dashboard Stack */}
+        <div className="lg:col-span-5 relative flex items-center justify-center pt-8 lg:pt-0">
+          {/* Large Interactive Pen Mascot floating next to the dashboard */}
+          <div className="absolute -left-16 -bottom-12 z-30 hidden xl:block">
+            <PenMascot variant="default" color="yellow" className="scale-90" />
+          </div>
 
-                {/* Secondary CTA */}
-                <Link
-                  href={slide.secondaryCta.href}
-                  className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-medium text-white hover:bg-white/10 transition-all duration-300 text-center border border-white/10 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 group/btn2 flex items-center justify-center gap-2 text-sm sm:text-base"
-                  style={{
-                    background: "rgba(255, 255, 255, 0.04)",
-                  }}
-                >
-                  <span>{slide.secondaryCta.text}</span>
-                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/btn2:translate-x-1 opacity-60" />
-                </Link>
+          {/* Main Simulated Dashboard Container */}
+          <div className="w-full max-w-[420px] bg-[#F6F0DD] border-[3.5px] border-[#1C1611] rounded-2xl p-6 shadow-[6px_6px_0px_0px_#1C1611] relative min-h-[440px] flex flex-col justify-between overflow-visible">
+            
+            {/* Header bar of Dashboard Simulation */}
+            <div className="flex items-center justify-between border-b-[3px] border-[#1C1611] pb-3 mb-6">
+              <div className="flex items-center gap-2">
+                <div className="w-3.5 h-3.5 rounded-full bg-[#FF4A3A] border-2 border-[#1C1611]" />
+                <div className="w-3.5 h-3.5 rounded-full bg-[#FCD34D] border-2 border-[#1C1611]" />
+                <div className="w-3.5 h-3.5 rounded-full bg-[#4DD0B1] border-2 border-[#1C1611]" />
               </div>
-            </motion.div>
-          </AnimatePresence>
-        </motion.div>
-      </motion.div>
+              <span className="font-extrabold text-xs tracking-wider uppercase text-[#1C1611]/60">
+                wisdom ledger v1.0
+              </span>
+              <PenMascot variant="logo" color="red" className="scale-[0.5] origin-right -my-6 -mr-1" />
+            </div>
 
-      {/* Carousel Controls */}
-      <div className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:right-8 lg:right-12 z-20 flex gap-4 items-center bg-black/70 backdrop-blur-md border border-white/10 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full w-[90%] sm:w-auto justify-between sm:justify-start">
-        <div className="h-1 bg-white/25 w-24 sm:w-32 rounded-full overflow-hidden">
-          <motion.div
-            className="h-full bg-primary"
-            initial={{ width: "0%" }}
-            animate={{
-              width: `${((currentSlide + 1) / HERO_SLIDES.length) * 100}%`,
-            }}
-            transition={{ duration: 0.3 }}
-          />
+            {/* Stack of cards using masking tape styling */}
+            <div className="flex-1 flex flex-col justify-start relative py-4 space-y-6">
+              
+              {/* Card 1 - Yellow Mint */}
+              <div className="bg-[#FCD34D] border-[2.5px] border-[#1C1611] rounded-xl p-4 shadow-[4px_4px_0px_0px_#1C1611] rotate-[-2deg] relative z-10 transition-transform hover:rotate-0 duration-200">
+                {/* Masking tape top-left */}
+                <div className="bg-[#FFFFE0]/80 border-[1.5px] border-[#1C1611] w-12 h-4 absolute -top-2 left-6 -rotate-12 select-none" />
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-extrabold text-xs uppercase text-[#1C1611]">mindset pivot</span>
+                  <span className="text-xs">⚡ active</span>
+                </div>
+                <p className="text-xs font-bold leading-relaxed text-[#1C1611]">
+                  &ldquo;The best way to predict the future is to document your past decision-making matrix.&rdquo;
+                </p>
+              </div>
+
+              {/* Card 2 - Teal Card */}
+              <div className="bg-[#4DD0B1] border-[2.5px] border-[#1C1611] rounded-xl p-4 shadow-[4px_4px_0px_0px_#1C1611] rotate-[2.5deg] relative z-20 transition-transform hover:rotate-0 duration-200 translate-x-2">
+                {/* Masking tape top-right */}
+                <div className="bg-[#FFFFE0]/80 border-[1.5px] border-[#1C1611] w-12 h-4 absolute -top-2 right-6 rotate-12 select-none" />
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-extrabold text-xs uppercase text-[#1C1611]">career lesson</span>
+                  <span className="text-xs">🔑 verified</span>
+                </div>
+                <p className="text-xs font-bold leading-relaxed text-[#1C1611]">
+                  Left my high-paying corporate tech job to pursue independent builder paths. Score: 10/10.
+                </p>
+              </div>
+
+              {/* Card 3 - Pink Card */}
+              <div className="bg-[#FFB3A7] border-[2.5px] border-[#1C1611] rounded-xl p-4 shadow-[4px_4px_0px_0px_#1C1611] rotate-[-1deg] relative z-10 transition-transform hover:rotate-0 duration-200 -translate-x-1">
+                {/* Masking tape bottom-left */}
+                <div className="bg-[#FFFFE0]/80 border-[1.5px] border-[#1C1611] w-12 h-4 absolute -bottom-2 left-10 rotate-6 select-none" />
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-extrabold text-xs uppercase text-[#1C1611]">daily axiom</span>
+                  <span className="text-xs">💡 quote</span>
+                </div>
+                <p className="text-xs font-bold leading-relaxed text-[#1C1611]">
+                  &ldquo;Never make long-term decisions on temporary, short-term emotions.&rdquo;
+                </p>
+              </div>
+
+            </div>
+
+            {/* Bottom active state indicator */}
+            <div className="mt-4 pt-3 border-t-[2.5px] border-[#1C1611] flex items-center justify-between">
+              <span className="font-extrabold text-xs uppercase text-[#1C1611]">system integrity</span>
+              <span className="font-black text-xs text-[#FF4A3A] animate-pulse">100% OPERATIONAL</span>
+            </div>
+
+          </div>
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={handlePrev}
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 border border-white/10 flex items-center justify-center hover:bg-white/20 hover:border-primary/30 transition-all text-white active:scale-95 group"
-            aria-label="Previous slide"
-          >
-            <ArrowLeft className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
-          </button>
-          <button
-            onClick={handleNext}
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 border border-white/10 flex items-center justify-center hover:bg-white/20 hover:border-primary/30 transition-all text-white active:scale-95 group"
-            aria-label="Next slide"
-          >
-            <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-          </button>
-        </div>
+
       </div>
-
-      {/* Bottom gradient fade to next section */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-24 sm:h-32 pointer-events-none"
-        style={{
-          background:
-            "linear-gradient(to top, rgb(10, 10, 10), transparent)",
-        }}
-        aria-hidden="true"
-      />
     </section>
   );
 }
