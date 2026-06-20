@@ -12,8 +12,8 @@ export const metadata = {
 export default function MainLayout({ children }) {
   return (
     <div
-      className="min-h-screen flex flex-col bg-neutral-950 text-white"
-      data-theme="dark"
+      className="min-h-screen flex flex-col bg-[#F6F0DD] text-[#1C1611] font-sans antialiased"
+      data-theme="light"
     >
       <SmoothScrollProvider>
         <MouseGlow />

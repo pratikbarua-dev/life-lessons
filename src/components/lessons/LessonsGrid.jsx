@@ -100,19 +100,10 @@ export default function LessonsGrid() {
   };
 
   return (
-    <section className="w-full pb-24 px-gutter relative">
-      {/* Ambient background glow */}
-      <div
-        className="absolute bottom-0 right-0 w-[500px] h-[500px] pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(195, 192, 255, 0.04), transparent 70%)",
-        }}
-        aria-hidden="true"
-      />
-
+    <section className="w-full pb-24 pt-8 px-gutter bg-[#F6F0DD] text-[#1C1611]">
       <div ref={ref} className="max-w-7xl mx-auto w-full relative z-10">
-        {/* Cards Grid — each card is now a standalone LessonCard module */}
+        
+        {/* Cards Grid */}
         <motion.div
           variants={staggerContainer}
           initial="hidden"
@@ -131,30 +122,32 @@ export default function LessonsGrid() {
 
         {/* Pagination */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.5 }}
           className="flex flex-col items-center justify-center w-full gap-4"
         >
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
+            
+            {/* Prev Button */}
             <button
               id="lessons-page-prev"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              className="w-9 h-9 rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-white flex items-center justify-center transition-all duration-300"
+              className="w-9 h-9 rounded-xl border-2 border-[#1C1611] bg-white text-[#1C1611] font-black flex items-center justify-center shadow-[2px_2px_0px_0px_#1C1611] hover:bg-[#FFB3A7] active:translate-x-[0.5px] active:translate-y-[0.5px] active:shadow-[1.5px_1.5px_0px_0px_#1C1611] transition-all cursor-pointer"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-4 h-4 stroke-[2.5px]" />
             </button>
 
             {[1, 2, 3, "...", 12].map((page, index) => (
               <button
                 key={index}
                 onClick={() => typeof page === "number" && setCurrentPage(page)}
-                className={`w-9 h-9 rounded-xl text-xs font-label-md font-semibold flex items-center justify-center transition-all duration-300 ${
-                  currentPage === page
-                    ? "bg-primary text-on-primary"
-                    : page === "..."
-                      ? "text-on-surface-variant/40 cursor-default"
-                      : "text-on-surface-variant hover:bg-white/5 hover:text-white"
+                className={`w-9 h-9 rounded-xl text-xs font-black flex items-center justify-center border-2 border-[#1C1611] transition-all ${
+                  page === "..."
+                    ? "border-transparent bg-transparent text-[#1C1611]/40 cursor-default"
+                    : currentPage === page
+                      ? "bg-[#FF4A3A] text-white shadow-[2px_2px_0px_0px_#1C1611]"
+                      : "bg-white text-[#1C1611] shadow-[2px_2px_0px_0px_#1C1611] hover:bg-[#FFB3A7] cursor-pointer"
                 }`}
                 disabled={page === "..."}
               >
@@ -162,16 +155,17 @@ export default function LessonsGrid() {
               </button>
             ))}
 
+            {/* Next Button */}
             <button
               id="lessons-page-next"
               onClick={() => setCurrentPage((p) => Math.min(12, p + 1))}
-              className="w-9 h-9 rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-white flex items-center justify-center transition-all duration-300"
+              className="w-9 h-9 rounded-xl border-2 border-[#1C1611] bg-white text-[#1C1611] font-black flex items-center justify-center shadow-[2px_2px_0px_0px_#1C1611] hover:bg-[#FFB3A7] active:translate-x-[0.5px] active:translate-y-[0.5px] active:shadow-[1.5px_1.5px_0px_0px_#1C1611] transition-all cursor-pointer"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-4 h-4 stroke-[2.5px]" />
             </button>
           </div>
 
-          <p className="text-[11px] font-label-sm font-bold tracking-widest text-on-surface-variant/50 uppercase select-none">
+          <p className="text-[11px] font-black tracking-widest text-[#1C1611]/60 uppercase select-none">
             Showing 6 of 72 lessons
           </p>
         </motion.div>

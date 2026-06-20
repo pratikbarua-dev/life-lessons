@@ -56,44 +56,21 @@ export default function MostSavedLessons() {
   });
 
   return (
-    <section className="py-24 relative w-full overflow-hidden">
-      {/* Subtle background treatment */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.02) 100%)",
-        }}
-        aria-hidden="true"
-      />
-
-      {/* Ambient light blob */}
-      <div
-        className="absolute bottom-0 left-1/4 w-[600px] h-[400px] pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse, rgba(195, 192, 255, 0.04), transparent 70%)",
-        }}
-        aria-hidden="true"
-      />
-
+    <section className="py-20 relative w-full bg-[#F6F0DD] text-[#1C1611]">
       <div ref={ref} className="px-gutter max-w-7xl mx-auto w-full relative z-10">
+        
         {/* Header Block with Title Icon */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="flex items-center gap-4 mb-16"
+          transition={{ duration: 0.5 }}
+          className="flex items-center gap-4 mb-16 border-b-[3.5px] border-[#1C1611] pb-6"
         >
-          <motion.div
-            className="p-3 glass-panel rounded-xl text-primary flex items-center justify-center"
-            whileHover={{ rotate: 15, scale: 1.1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Star className="w-6 h-6 fill-primary stroke-none" />
-          </motion.div>
-          <h2 className="font-headline-md text-3xl text-white">
-            Most Saved This Week
+          <div className="p-3 bg-[#FCD34D] border-[3px] border-[#1C1611] rounded-xl shadow-[3px_3px_0px_0px_#1C1611] text-[#1C1611] flex items-center justify-center">
+            <Star className="w-6 h-6 fill-[#1C1611] stroke-[#1C1611] stroke-[2px]" />
+          </div>
+          <h2 className="font-black text-3xl sm:text-4xl uppercase tracking-tight text-[#1C1611]">
+            most saved this week
           </h2>
         </motion.div>
 
@@ -108,64 +85,51 @@ export default function MostSavedLessons() {
             <motion.article
               key={lesson.id}
               variants={fadeInUp}
-              className="flex flex-col group w-full"
+              className="flex flex-col group w-full bg-[#F6F0DD] border-[3.5px] border-[#1C1611] rounded-2xl overflow-hidden shadow-[6px_6px_0px_0px_#1C1611] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_#1C1611] transition-all duration-150"
             >
               {/* Image Frame Container with Floating Counter */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-                className="aspect-video rounded-2xl relative overflow-hidden mb-6 w-full"
-                style={{
-                  background: "rgba(255, 255, 255, 0.03)",
-                  border: "1px solid rgba(255, 255, 255, 0.08)",
-                }}
-              >
+              <div className="aspect-video relative overflow-hidden w-full border-b-[3.5px] border-[#1C1611]">
                 <Image
                   src={lesson.imageUrl}
                   alt={lesson.title}
                   fill
                   sizes="(max-w-768px) 100vw, 33vw"
-                  className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out grayscale group-hover:grayscale-0"
                   loading="lazy"
                 />
 
                 {/* Save Count Overlay Badge */}
-                <motion.div
-                  className="absolute top-4 right-4 px-3 py-1 rounded-full shadow-lg flex items-center gap-1.5 border border-white/20 z-10"
-                  style={{ background: "rgba(0, 0, 0, 0.6)" }}
-                  whileHover={{ scale: 1.1 }}
-                >
-                  <Bookmark className="w-3 h-3 fill-primary text-primary stroke-none" />
-                  <span className="text-xs font-bold text-white">
+                <div className="absolute top-4 right-4 px-3 py-1 bg-[#FCD34D] border-[2px] border-[#1C1611] rounded-full shadow-[2px_2px_0px_0px_#1C1611] flex items-center gap-1.5 z-10 text-[#1C1611]">
+                  <Bookmark className="w-3.5 h-3.5 fill-[#1C1611] stroke-[#1C1611] stroke-[2px]" />
+                  <span className="text-xs font-black">
                     {lesson.saveCount}
                   </span>
-                </motion.div>
+                </div>
+              </div>
 
-                {/* Bottom gradient */}
-                <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
-              </motion.div>
+              <div className="p-6 flex flex-col flex-1">
+                {/* Title Header */}
+                <h4 className="font-black text-xl mb-3 text-[#1C1611] group-hover:text-[#FF4A3A] transition-colors duration-150 line-clamp-2">
+                  <Link href={lesson.href}>{lesson.title}</Link>
+                </h4>
 
-              {/* Title Header */}
-              <h4 className="font-headline-md text-xl mb-3 text-white group-hover:text-primary transition-colors duration-300">
-                <Link href={lesson.href}>{lesson.title}</Link>
-              </h4>
+                {/* Sub-description Blurb */}
+                <p className="text-[#1C1611]/80 text-sm font-medium mb-6 leading-relaxed flex-grow line-clamp-3">
+                  {lesson.description}
+                </p>
 
-              {/* Sub-description Blurb */}
-              <p className="text-on-surface-variant text-sm mb-6 leading-relaxed flex-grow">
-                {lesson.description}
-              </p>
-
-              {/* Action and Timeline Metadata Footer */}
-              <div className="mt-auto flex items-center justify-between pt-4 border-t border-white/5">
-                <Link
-                  href={lesson.authorHref}
-                  className="text-primary font-medium text-xs hover:underline transition-all"
-                >
-                  {lesson.author}
-                </Link>
-                <span className="text-xs text-on-surface-variant">
-                  {lesson.date}
-                </span>
+                {/* Action and Timeline Metadata Footer */}
+                <div className="mt-auto flex items-center justify-between pt-4 border-t border-[#1C1611]/15">
+                  <Link
+                    href={lesson.authorHref}
+                    className="text-[#FF4A3A] font-black text-xs uppercase hover:underline transition-all"
+                  >
+                    {lesson.author}
+                  </Link>
+                  <span className="text-xs font-black uppercase text-[#1C1611]/70">
+                    {lesson.date}
+                  </span>
+                </div>
               </div>
             </motion.article>
           ))}

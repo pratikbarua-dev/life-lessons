@@ -18,6 +18,7 @@ const LESSONS_DATA = [
     imageUrl:
       "https://images.unsplash.com/photo-1519817650390-64a93db51149?q=80&w=600&auto=format&fit=crop",
     href: "/lessons/deliberate-boredom",
+    bgClass: "bg-[#F6F0DD]", // Warm Cream
   },
   {
     id: 2,
@@ -29,6 +30,7 @@ const LESSONS_DATA = [
     imageUrl:
       "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=600&auto=format&fit=crop",
     href: "/lessons/leading-without-authority",
+    bgClass: "bg-[#4DD0B1]", // Accent Teal
   },
   {
     id: 3,
@@ -40,6 +42,7 @@ const LESSONS_DATA = [
     imageUrl:
       "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?q=80&w=600&auto=format&fit=crop",
     href: "/lessons/geometry-of-gratitude",
+    bgClass: "bg-[#FFB3A7]", // Accent Pink
   },
 ];
 
@@ -50,40 +53,30 @@ export default function FeaturedLessons() {
   });
 
   return (
-    <section className="py-24 px-gutter max-w-7xl mx-auto w-full relative">
-      {/* Ambient section background */}
-      <div
-        className="absolute top-0 right-0 w-[500px] h-[500px] pointer-events-none opacity-30"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(195, 192, 255, 0.08), transparent 70%)",
-        }}
-        aria-hidden="true"
-      />
-
+    <section className="py-20 px-gutter max-w-7xl mx-auto w-full relative bg-[#F6F0DD] text-[#1C1611]">
       {/* Header Block */}
       <motion.div
         ref={ref}
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="flex justify-between items-end mb-16 border-b border-white/10 pb-6 w-full"
+        transition={{ duration: 0.5 }}
+        className="flex flex-col sm:flex-row sm:items-end justify-between mb-16 border-b-[3.5px] border-[#1C1611] pb-6 w-full gap-4"
       >
         <div>
-          <h2 className="font-headline-lg text-4xl text-white">
+          <h2 className="font-black text-4xl sm:text-5xl tracking-tight uppercase text-[#1C1611]">
             Featured Lessons
           </h2>
-          <p className="text-on-surface-variant mt-2">
+          <p className="text-[#1C1611]/80 mt-2 font-medium">
             Curated wisdom from our leading contributors.
           </p>
         </div>
 
         <Link
           href="/lessons"
-          className="text-primary font-label-md flex items-center gap-2 group hover:gap-3 transition-all duration-300"
+          className="bg-[#FCD34D] text-[#1C1611] font-black uppercase text-center px-6 py-2.5 rounded-full border-[3px] border-[#1C1611] shadow-[3px_3px_0px_0px_#1C1611] hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 flex items-center justify-center gap-2 max-w-max self-start sm:self-auto"
         >
-          View All{" "}
-          <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+          <span>View All</span>
+          <ArrowRight className="w-4 h-4 stroke-[2.5px]" />
         </Link>
       </motion.div>
 
@@ -98,65 +91,52 @@ export default function FeaturedLessons() {
           <motion.article
             key={lesson.id}
             variants={fadeInUp}
-            whileHover={{
-              y: -10,
-              scale: 1.02,
-              transition: { duration: 0.3, ease: "easeOut" },
-            }}
-            className="rounded-2xl overflow-hidden group flex flex-col w-full relative"
-            style={{
-              background: "rgba(255, 255, 255, 0.04)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-              boxShadow: "0 0 0 0 rgba(195, 192, 255, 0)",
-            }}
+            className={`rounded-2xl overflow-hidden group flex flex-col w-full relative border-[3.5px] border-[#1C1611] shadow-[6px_6px_0px_0px_#1C1611] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_#1C1611] transition-all duration-150 ${lesson.bgClass}`}
           >
-            {/* Card hover glow border overlay */}
-            <div
-              className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10"
-              style={{
-                boxShadow:
-                  "0 0 30px -5px rgba(195, 192, 255, 0.15), inset 0 0 0 1px rgba(195, 192, 255, 0.15)",
-              }}
-              aria-hidden="true"
-            />
-
             {/* Image Scaffold Box */}
-            <div className="overflow-hidden h-64 relative w-full">
+            <div className="overflow-hidden h-52 relative w-full border-b-[3.5px] border-[#1C1611]">
               <Image
                 src={lesson.imageUrl}
                 alt={lesson.title}
                 fill
                 sizes="(max-w-768px) 100vw, 33vw"
-                className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                className="object-cover transition-transform duration-500 ease-out grayscale group-hover:grayscale-0 group-hover:scale-105"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-60" />
             </div>
 
             {/* Content box */}
-            <div className="p-8 flex flex-col flex-1">
+            <div className="p-6 flex flex-col flex-1 text-[#1C1611]">
               {/* Meta Identifiers */}
               <div className="flex items-center gap-3 mb-4">
-                <motion.span
-                  className="text-primary font-label-sm uppercase tracking-widest px-2 py-1 bg-primary/10 rounded border border-primary/20"
-                  whileHover={{ scale: 1.05 }}
-                >
+                <span className="bg-[#FF4A3A] text-white font-black text-xs uppercase tracking-widest px-2.5 py-1 rounded border-2 border-[#1C1611]">
                   {lesson.category}
-                </motion.span>
-                <span className="text-on-surface-variant text-xs font-medium">
-                  • {lesson.readTime}
+                </span>
+                <span className="text-[#1C1611]/70 text-xs font-black uppercase">
+                  {lesson.readTime}
                 </span>
               </div>
 
               {/* Title Header */}
-              <h3 className="font-headline-md text-2xl mb-4 text-white group-hover:text-primary transition-colors duration-300">
+              <h3 className="font-black text-xl mb-3 text-[#1C1611] hover:text-[#FF4A3A] transition-colors duration-150 line-clamp-2">
                 <Link href={lesson.href}>{lesson.title}</Link>
               </h3>
 
               {/* Blurb Copy */}
-              <p className="text-on-surface-variant text-sm line-clamp-3 leading-relaxed mb-6">
+              <p className="text-[#1C1611]/80 text-sm font-medium line-clamp-3 leading-relaxed mb-6">
                 {lesson.description}
               </p>
+
+              {/* Arrow link block at the bottom */}
+              <div className="mt-auto pt-4 border-t border-[#1C1611]/15 flex items-center justify-between">
+                <Link 
+                  href={lesson.href} 
+                  className="font-black uppercase text-xs tracking-wider flex items-center gap-2 hover:text-[#FF4A3A] group-hover:translate-x-1 transition-all duration-150"
+                >
+                  <span>read lesson</span>
+                  <ArrowRight className="w-4 h-4 stroke-[2.5px]" />
+                </Link>
+              </div>
             </div>
           </motion.article>
         ))}

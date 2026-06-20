@@ -17,6 +17,7 @@ const CONTRIBUTORS_DATA = [
     avatarUrl:
       "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=150&auto=format&fit=crop",
     profileHref: "/contributors/elena-vance",
+    bgClass: "bg-[#4DD0B1]", // Teal
   },
   {
     id: 2,
@@ -27,6 +28,7 @@ const CONTRIBUTORS_DATA = [
     avatarUrl:
       "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=150&auto=format&fit=crop",
     profileHref: "/contributors/marcus-thorne",
+    bgClass: "bg-[#FFB3A7]", // Pink
   },
   {
     id: 3,
@@ -37,6 +39,7 @@ const CONTRIBUTORS_DATA = [
     avatarUrl:
       "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop",
     profileHref: "/contributors/sarah-chen",
+    bgClass: "bg-[#FCD34D]", // Yellow
   },
   {
     id: 4,
@@ -47,6 +50,7 @@ const CONTRIBUTORS_DATA = [
     avatarUrl:
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=150&auto=format&fit=crop",
     profileHref: "/contributors/julian-aris",
+    bgClass: "bg-[#F6F0DD]", // Warm Cream
   },
 ];
 
@@ -57,27 +61,23 @@ export default function TopContributors() {
   });
 
   return (
-    <section className="py-24 w-full overflow-hidden relative">
-      {/* Ambient background */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse at 50% 0%, rgba(195, 192, 255, 0.03) 0%, transparent 50%)",
-        }}
-        aria-hidden="true"
-      />
-
+    <section className="py-20 w-full relative bg-[#F6F0DD] text-[#1C1611]">
       <div ref={ref} className="px-gutter max-w-7xl mx-auto w-full relative z-10">
+        
         {/* Header Block */}
-        <motion.h2
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="font-headline-md text-3xl mb-12 text-center md:text-left text-white"
+          transition={{ duration: 0.5 }}
+          className="border-b-[3.5px] border-[#1C1611] pb-6 mb-12"
         >
-          Top Contributors
-        </motion.h2>
+          <h2 className="font-black text-4xl sm:text-5xl uppercase tracking-tight text-[#1C1611]">
+            top contributors
+          </h2>
+          <p className="text-[#1C1611]/85 font-medium mt-2">
+            Meet the top minds crafting verified wisdom blueprints.
+          </p>
+        </motion.div>
 
         {/* Scrollable Contributors Row */}
         <motion.div
@@ -90,66 +90,52 @@ export default function TopContributors() {
             <motion.div key={person.id} variants={fadeInUp} className="flex-shrink-0">
               <Link
                 href={person.profileHref}
-                className="flex-shrink-0 w-72 p-5 rounded-2xl flex flex-col gap-4 transition-all group relative overflow-hidden"
-                style={{
-                  background: "rgba(255, 255, 255, 0.05)",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
-                }}
+                className={`flex-shrink-0 w-72 p-5 rounded-2xl flex flex-col gap-4 border-[3px] border-[#1C1611] shadow-[4px_4px_0px_0px_#1C1611] hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-[2.5px_2.5px_0px_0px_#1C1611] transition-all duration-150 group relative overflow-hidden ${person.bgClass}`}
               >
-                {/* Hover glow overlay */}
-                <div
-                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                  style={{
-                    boxShadow:
-                      "0 0 40px -10px rgba(195, 192, 255, 0.15), inset 0 0 0 1px rgba(195, 192, 255, 0.12)",
-                  }}
-                  aria-hidden="true"
-                />
-
                 {/* Top row: avatar + info */}
-                <div className="flex items-center gap-4 relative z-10">
+                <div className="flex items-center gap-4 relative z-10 text-[#1C1611]">
                   {/* Profile Avatar Container */}
                   <div className="relative">
-                    <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-primary/20 group-hover:border-primary/50 transition-colors duration-300">
+                    <div className="relative w-14 h-14 rounded-full overflow-hidden border-[2.5px] border-[#1C1611]">
                       <Image
                         src={person.avatarUrl}
                         alt={person.name}
                         fill
                         sizes="56px"
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
                         loading="lazy"
                       />
                     </div>
                     {/* Verified badge */}
                     {person.verified && (
                       <motion.div
-                        className="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full border-2 border-[#101415] flex items-center justify-center"
-                        whileHover={{ scale: 1.2 }}
+                        className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#FF4A3A] rounded-full border-2 border-[#1C1611] flex items-center justify-center"
+                        whileHover={{ scale: 1.1 }}
                       >
-                        <Check className="w-3 h-3 text-on-primary stroke-[3]" />
+                        <Check className="w-3 h-3 text-[#1C1611] stroke-[3]" />
                       </motion.div>
                     )}
                     {/* Online indicator */}
-                    <div className="absolute top-0 right-0 w-3 h-3 rounded-full bg-green-400 border-2 border-[#101415]" />
+                    <div className="absolute top-0 right-0 w-3 h-3 rounded-full bg-[#4DD0B1] border-2 border-[#1C1611]" />
                   </div>
 
                   {/* Contributor Metadata */}
                   <div>
-                    <p className="font-bold text-white group-hover:text-primary transition-colors duration-300">
+                    <p className="font-black text-lg text-[#1C1611] tracking-tight lowercase">
                       {person.name}
                     </p>
-                    <p className="text-xs text-on-surface-variant">
-                      {person.lessonsCount} Lessons Shared
+                    <p className="text-xs font-black uppercase text-[#1C1611]/70">
+                      {person.lessonsCount} lessons shared
                     </p>
                   </div>
                 </div>
 
-                {/* Hover reveal info */}
-                <div className="relative z-10 flex items-center justify-between pt-3 border-t border-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-xs text-on-surface-variant">
+                {/* Always-visible info footer inside card */}
+                <div className="relative z-10 flex items-center justify-between pt-3 border-t border-[#1C1611]/15 text-xs font-bold text-[#1C1611]/80">
                   <span>Since {person.memberSince}</span>
-                  <span className="flex items-center gap-1 text-primary">
-                    View Profile
-                    <ArrowRight className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-0.5" />
+                  <span className="flex items-center gap-1 text-[#FF4A3A] font-black uppercase tracking-wider">
+                    profile
+                    <ArrowRight className="w-3.5 h-3.5 stroke-[2.5px] transition-transform group-hover:translate-x-0.5" />
                   </span>
                 </div>
               </Link>

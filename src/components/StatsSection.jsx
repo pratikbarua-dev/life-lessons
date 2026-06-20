@@ -6,13 +6,12 @@ import CountUp from "react-countup";
 import { staggerContainer, fadeInUp } from "@/lib/animations";
 
 const STATS = [
-  { value: 50, suffix: "K+", label: "Lessons Shared" },
-  { value: 120, suffix: "+", label: "Contributors" },
-  { value: 1, suffix: "M+", label: "Readers" },
-  { value: 85, suffix: "+", label: "Countries" },
+  { value: 50, suffix: "K+", label: "lessons shared" },
+  { value: 120, suffix: "+", label: "contributors" },
+  { value: 1, suffix: "M+", label: "wisdom readers" },
+  { value: 85, suffix: "+", label: "countries reached" },
 ];
 
-// Custom easing - ease out expo
 const easeOutExpo = (t, b, c, d) => {
   return t === d
     ? b + c
@@ -22,22 +21,11 @@ const easeOutExpo = (t, b, c, d) => {
 export default function StatsSection() {
   const { ref, inView } = useInView({
     triggerOnce: true,
-    threshold: 0.3,
+    threshold: 0.2,
   });
 
   return (
-    <section className="relative py-16 w-full overflow-hidden">
-      {/* Ambient background glow */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[200px] rounded-full opacity-20"
-          style={{
-            background:
-              "radial-gradient(ellipse, rgba(195, 192, 255, 0.3), transparent 70%)",
-          }}
-        />
-      </div>
-
+    <section className="relative py-12 w-full bg-[#F6F0DD] text-[#1C1611]">
       <motion.div
         ref={ref}
         variants={staggerContainer}
@@ -45,20 +33,22 @@ export default function StatsSection() {
         animate={inView ? "visible" : "hidden"}
         className="relative z-10 px-gutter max-w-7xl mx-auto w-full"
       >
-        <div className="rounded-3xl p-8 md:p-12 border border-white/10" style={{ background: "rgba(255, 255, 255, 0.04)" }}>
+        {/* Main Neo-Brutalist Container */}
+        <div className="bg-[#FFB3A7] border-[3.5px] border-[#1C1611] rounded-2xl p-8 md:p-12 shadow-[6px_6px_0px_0px_#1C1611]">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-            {STATS.map((stat, index) => (
+            {STATS.map((stat) => (
               <motion.div
                 key={stat.label}
                 variants={fadeInUp}
-                className="text-center group"
+                className="text-center flex flex-col items-center justify-center"
               >
-                <div className="text-4xl md:text-5xl font-bold text-white mb-2 font-headline-lg">
+                {/* Stats Number */}
+                <div className="text-4xl md:text-5xl font-black text-[#1C1611] tracking-tight uppercase mb-1">
                   {inView ? (
                     <CountUp
                       start={0}
                       end={stat.value}
-                      duration={2.5}
+                      duration={2}
                       separator=","
                       suffix={stat.suffix}
                       easingFn={easeOutExpo}
@@ -67,25 +57,14 @@ export default function StatsSection() {
                     <span>0{stat.suffix}</span>
                   )}
                 </div>
-                <p className="text-on-surface-variant text-sm font-label-md tracking-wide uppercase">
+
+                {/* Label */}
+                <p className="text-[#1C1611] text-xs font-black uppercase tracking-wider">
                   {stat.label}
                 </p>
 
-                {/* Bottom accent line */}
-                <motion.div
-                  initial={{ scaleX: 0 }}
-                  animate={inView ? { scaleX: 1 } : {}}
-                  transition={{
-                    duration: 0.8,
-                    delay: 0.5 + index * 0.15,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                  className="mt-4 h-px mx-auto w-12"
-                  style={{
-                    background:
-                      "linear-gradient(90deg, transparent, rgba(195, 192, 255, 0.4), transparent)",
-                  }}
-                />
+                {/* Playful diamond divider instead of a subtle gradient line */}
+                <div className="mt-4 w-3.5 h-3.5 bg-[#1C1611] rotate-45 border border-[#FFB3A7]" />
               </motion.div>
             ))}
           </div>
