@@ -1,24 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
+import GooglyEyes from "./GooglyEyes";
+import PenMascot from "./PenMascot";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const { scrollY } = useScroll();
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setScrolled(latest > 50);
-  });
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const navLinks = [
-    { name: "Home", href: "/", isActive: true },
-    { name: "Public Lessons", href: "/public-lessons", isActive: false },
-    { name: "Add Lesson", href: "/add-lesson", isActive: false },
-    { name: "My Lessons", href: "/my-lessons", isActive: false },
-    { name: "Pricing", href: "/pricing", isActive: false },
+    { name: "home", href: "/" },
+    { name: "public lessons", href: "/lessons" },
+    { name: "add lesson", href: "/add-lesson" },
+    { name: "my lessons", href: "/my-lessons" },
+    { name: "pricing", href: "/pricing" },
   ];
 
   // Variants for the mobile menu container overlay
@@ -26,129 +31,127 @@ export default function Navbar() {
     closed: {
       opacity: 0,
       y: "-100%",
-      transition: { duration: 0.3, ease: "easeInOut", when: "afterChildren" },
+      transition: { duration: 0.2, ease: "easeInOut" },
     },
     open: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.4, ease: "easeOut", delayChildren: 0.1, staggerChildren: 0.05 },
+      transition: { duration: 0.3, ease: "easeOut" },
     },
   };
 
-  // Variants for individual mobile links cascading down
-  const linkVariants = {
-    closed: { opacity: 0, x: -16 },
-    open: { opacity: 1, x: 0 },
-  };
-
   return (
-    <motion.nav
-      initial={false}
-      animate={scrolled || isOpen ? "scrolled" : "transparent"}
-      variants={{
-        transparent: {
-          backgroundColor: "rgba(16, 20, 21, 0)",
-          backdropFilter: "blur(0px)",
-          borderBottomColor: "rgba(255,255,255,0)",
-        },
-        scrolled: {
-          backgroundColor: "rgba(16, 20, 21, 0.85)",
-          backdropFilter: "blur(24px)",
-          borderBottomColor: "rgba(255,255,255,0.06)",
-        },
-      }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      className="fixed top-0 w-full z-50 border-b"
-      style={{ WebkitBackdropFilter: scrolled || isOpen ? "blur(24px)" : "blur(0px)" }}
-    >
-      <motion.div
-        animate={{ height: scrolled ? 60 : 72 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-        className="flex justify-between items-center px-4 sm:px-8 max-w-7xl mx-auto w-full relative z-50"
-      >
-        {/* Logo Section */}
-        <div className="flex-shrink-0">
-          <Link
-            href="/"
-            className="font-headline-md text-xl sm:text-2xl text-primary hover:opacity-90 transition-opacity whitespace-nowrap"
-          >
-            Digital Life Lessons
-          </Link>
-        </div>
-
-        {/* Desktop Navigation Links */}
-        <div className="hidden lg:flex gap-8 items-center h-full">
-          {navLinks.map((link) => (
+    <div className="fixed top-0 w-full z-50 flex flex-col">
+      {/* Top Navbar Header */}
+      <nav className="w-full bg-[#F6F0DD] text-[#1C1611] border-b-[3.5px] border-[#1C1611] transition-all duration-200">
+        <div className="flex justify-between items-center h-16 sm:h-20 px-4 sm:px-8 max-w-7xl mx-auto w-full">
+          {/* Logo Section */}
+          <div className="flex-shrink-0">
             <Link
-              key={link.name}
-              href={link.href}
-              className={`font-body-md relative py-1 transition-all duration-300 group ${link.isActive
-                ? "text-white font-bold"
-                : "text-white/60 hover:text-white"
-                }`}
+              href="/"
+              className="hover:opacity-95 transition-opacity flex items-center gap-3"
             >
-              {link.name}
-              <span
-                className={`absolute bottom-0 left-0 h-[2px] bg-primary transition-all duration-300 ease-out ${link.isActive ? "w-full" : "w-0 group-hover:w-full"
-                  }`}
-              />
-            </Link>
-          ))}
-        </div>
-
-        {/* Desktop Authentication Actions & Mobile Toggle */}
-        <div className="flex gap-2 sm:gap-4 items-center">
-          <div className="hidden md:flex gap-2 sm:gap-4 items-center">
-            <Link
-              href="/login"
-              className="text-primary font-label-md px-4 py-1 hover:bg-white/5 rounded-lg transition-all relative group"
-            >
-              Login
-              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[1px] w-0 bg-primary/50 transition-all duration-300 group-hover:w-3/4" />
-            </Link>
-            <Link
-              href="/get-started"
-              className="relative bg-primary text-on-primary font-label-md px-5 py-2 rounded-lg shadow-lg shadow-primary/20 active:scale-95 duration-150 transition-all hover:brightness-110 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 overflow-hidden group whitespace-nowrap"
-            >
-              <span className="relative z-10">Get Started</span>
-              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+              <PenMascot variant="logo" color="teal" className="scale-[0.8] sm:scale-100 origin-center -my-3" />
+              <span className="font-extrabold text-xl sm:text-2xl tracking-tight text-[#1C1611] lowercase font-sans">
+                digital life lessons
+              </span>
             </Link>
           </div>
 
-          {/* Mobile/Tablet Menu Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2 text-white/80 hover:text-white focus:outline-none z-50 ml-2"
-            aria-label="Toggle Menu"
-            aria-expanded={isOpen}
-          >
-            <svg className="w-6 h-6 fill-none stroke-current" viewBox="0 0 24 24">
-              <motion.path
-                strokeWidth="2"
-                strokeLinecap="round"
-                d="M 3.75 6.75 L 20.25 6.75"
-                animate={isOpen ? { d: "M 4.5 19.5 L 19.5 4.5" } : { d: "M 3.75 6.75 L 20.25 6.75" }}
-                transition={{ duration: 0.3 }}
-              />
-              <motion.path
-                strokeWidth="2"
-                strokeLinecap="round"
-                d="M 3.75 12 L 20.25 12"
-                initial={{ opacity: 1 }}
-                animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
-                transition={{ duration: 0.2 }}
-              />
-              <motion.path
-                strokeWidth="2"
-                strokeLinecap="round"
-                d="M 3.75 17.25 L 20.25 17.25"
-                animate={isOpen ? { d: "M 4.5 4.5 L 19.5 19.5" } : { d: "M 3.75 17.25 L 20.25 17.25" }}
-                transition={{ duration: 0.3 }}
-              />
-            </svg>
-          </button>
+          {/* Desktop Navigation Links */}
+          <div className="hidden lg:flex gap-6 items-center h-full">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                className="font-sans text-sm font-extrabold tracking-tight py-2 px-3 text-[#1C1611] hover:text-[#FF4A3A] hover:bg-[#1C1611]/5 rounded-md transition-all duration-100 uppercase"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
+
+          {/* Desktop Authentication Actions & Mobile Toggle */}
+          <div className="flex gap-2 sm:gap-4 items-center">
+            <div className="hidden md:flex gap-2 sm:gap-4 items-center">
+              <Link
+                href="/login"
+                className="text-[#1C1611] font-extrabold text-sm uppercase px-4 py-2 hover:bg-[#FFB3A7] border-[2.5px] border-transparent hover:border-[#1C1611] rounded-xl transition-all duration-100"
+              >
+                login
+              </Link>
+              <Link
+                href="/get-started"
+                className="bg-[#FF4A3A] text-[#1C1611] font-black text-sm uppercase px-5 py-2.5 rounded-full border-[3px] border-[#1C1611] shadow-[3px_3px_0px_0px_#1C1611] hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 whitespace-nowrap"
+              >
+                get started
+              </Link>
+            </div>
+
+            {/* Mobile/Tablet Menu Button */}
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="lg:hidden p-2 text-[#1C1611] focus:outline-none z-50 ml-2 border-[2.5px] border-[#1C1611] rounded-lg bg-white/20 active:translate-y-0.5"
+              aria-label="Toggle Menu"
+              aria-expanded={isOpen}
+            >
+              <svg className="w-6 h-6 fill-none stroke-current" viewBox="0 0 24 24">
+                <motion.path
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  d="M 3.75 6.75 L 20.25 6.75"
+                  animate={isOpen ? { d: "M 4.5 19.5 L 19.5 4.5" } : { d: "M 3.75 6.75 L 20.25 6.75" }}
+                  transition={{ duration: 0.2 }}
+                />
+                <motion.path
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  d="M 3.75 12 L 20.25 12"
+                  initial={{ opacity: 1 }}
+                  animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
+                  transition={{ duration: 0.15 }}
+                />
+                <motion.path
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  d="M 3.75 17.25 L 20.25 17.25"
+                  animate={isOpen ? { d: "M 4.5 4.5 L 19.5 19.5" } : { d: "M 3.75 17.25 L 20.25 17.25" }}
+                  transition={{ duration: 0.2 }}
+                />
+              </svg>
+            </button>
+          </div>
         </div>
-      </motion.div>
+      </nav>
+
+      {/* Infinite Marquee Ribbon */}
+      <div className="w-full bg-[#1C1611] text-white py-2 border-b-[3px] border-[#1C1611] overflow-hidden whitespace-nowrap flex select-none relative z-30">
+        <div className="animate-marquee flex items-center gap-12 text-xs font-black uppercase tracking-widest">
+          {/* Set 1 */}
+          <span>preserve your wisdom</span>
+          <span className="text-[#FF4A3A]">●</span>
+          <span>document your blueprint</span>
+          <span className="text-[#FCD34D]">●</span>
+          <span>retro-grade layouts</span>
+          <span className="text-[#4DD0B1]">●</span>
+          <span>honest onboarding</span>
+          <span className="text-[#FFB3A7]">●</span>
+          <span>share what matters</span>
+          <span className="text-[#FF4A3A]">●</span>
+
+          {/* Set 2 */}
+          <span>preserve your wisdom</span>
+          <span className="text-[#FF4A3A]">●</span>
+          <span>document your blueprint</span>
+          <span className="text-[#FCD34D]">●</span>
+          <span>retro-grade layouts</span>
+          <span className="text-[#4DD0B1]">●</span>
+          <span>honest onboarding</span>
+          <span className="text-[#FFB3A7]">●</span>
+          <span>share what matters</span>
+          <span className="text-[#FF4A3A]">●</span>
+        </div>
+      </div>
 
       {/* Mobile/Tablet Drawer Menu */}
       <AnimatePresence>
@@ -158,57 +161,40 @@ export default function Navbar() {
             animate="open"
             exit="closed"
             variants={menuVariants}
-            className="fixed inset-0 top-0 left-0 w-full h-screen bg-[#101415]/95 backdrop-blur-2xl z-40 lg:hidden flex flex-col justify-center px-6 sm:px-12 pt-20"
+            className="fixed inset-0 top-0 left-0 w-full h-screen bg-[#F6F0DD] z-40 lg:hidden flex flex-col justify-center px-6 sm:px-12 pt-24 border-b-[4px] border-[#1C1611]"
           >
-            <div className="flex flex-col gap-6 my-auto">
+            <div className="flex flex-col gap-5 my-auto max-w-md mx-auto w-full">
               {navLinks.map((link) => (
-                <motion.div key={link.name} variants={linkVariants}>
-                  <Link
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className={`text-2xl font-semibold tracking-wide block transition-colors ${link.isActive ? "text-primary" : "text-white/70 hover:text-white"
-                      }`}
-                  >
-                    {link.name}
-                  </Link>
-                </motion.div>
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className="text-2xl font-black uppercase text-[#1C1611] hover:text-[#FF4A3A] transition-colors border-b-2 border-[#1C1611]/20 pb-2"
+                >
+                  {link.name}
+                </Link>
               ))}
 
-              <hr className="border-white/10 my-4" />
-
-              {/* Mobile Auth actions (Visible only on mobile screen widths) */}
-              <motion.div variants={linkVariants} className="flex flex-col sm:flex-row gap-4 md:hidden">
+              <div className="flex flex-col gap-3 mt-6">
                 <Link
                   href="/login"
                   onClick={() => setIsOpen(false)}
-                  className="text-center text-primary border border-primary/20 bg-primary/5 py-3 rounded-xl font-medium"
+                  className="text-center text-[#1C1611] border-[3px] border-[#1C1611] bg-white py-3 rounded-xl font-bold uppercase shadow-[3px_3px_0px_0px_#1C1611]"
                 >
-                  Login
+                  login
                 </Link>
                 <Link
                   href="/get-started"
                   onClick={() => setIsOpen(false)}
-                  className="text-center bg-primary text-on-primary py-3 rounded-xl font-medium shadow-lg shadow-primary/20"
+                  className="text-center bg-[#FF4A3A] text-[#1C1611] border-[3px] border-[#1C1611] py-3 rounded-xl font-black uppercase shadow-[3px_3px_0px_0px_#1C1611]"
                 >
-                  Get Started
+                  get started
                 </Link>
-              </motion.div>
+              </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Bottom glow line when scrolled */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: scrolled && !isOpen ? 1 : 0 }}
-        transition={{ duration: 0.3 }}
-        className="absolute bottom-0 left-0 right-0 h-px"
-        style={{
-          background: "linear-gradient(90deg, transparent, rgba(195, 192, 255, 0.2), transparent)",
-        }}
-        aria-hidden="true"
-      />
-    </motion.nav>
+    </div>
   );
 }
