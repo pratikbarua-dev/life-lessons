@@ -5,6 +5,7 @@ import { Globe, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { staggerContainer, fadeInUp } from "@/lib/animations";
+import GooglyEyes from "./GooglyEyes";
 
 export default function Footer() {
   const { ref, inView } = useInView({
@@ -14,17 +15,17 @@ export default function Footer() {
 
   const handleSubscribe = (e) => {
     e.preventDefault();
-    // Handle newsletter subscription action here
   };
 
   return (
-    <footer className="relative bg-background border-t border-white/10 w-full py-20 text-slate-600 text-sm overflow-hidden">
-      {/* Ambient top glow */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[2px] pointer-events-none"
+    <footer className="relative bg-[#F6F0DD] border-t-[3.5px] border-[#1C1611] w-full py-16 text-[#1C1611] overflow-hidden">
+      
+      {/* Blueprint Dot Matrix subtle texture */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-[0.04]"
         style={{
-          background:
-            "linear-gradient(90deg, transparent, rgba(195, 192, 255, 0.2), transparent)",
+          backgroundImage: "radial-gradient(#1C1611 1.5px, transparent 1.5px)",
+          backgroundSize: "20px 20px"
         }}
         aria-hidden="true"
       />
@@ -34,19 +35,23 @@ export default function Footer() {
         variants={staggerContainer}
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
-        className="max-w-7xl mx-auto px-gutter w-full"
+        className="max-w-7xl mx-auto px-gutter w-full relative z-10"
       >
         {/* Main Footer Layout Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-16 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 w-full">
+          
           {/* Column 1: Branding & Description */}
-          <motion.div variants={fadeInUp} className="lg:col-span-1">
+          <motion.div variants={fadeInUp} className="lg:col-span-1 flex flex-col items-start">
             <Link
               href="/"
-              className="font-headline-md text-3xl text-primary mb-6 inline-block hover:opacity-90 transition-opacity"
+              className="hover:opacity-95 transition-opacity flex items-center gap-2.5 mb-6"
             >
-              Digital Life Lessons
+              <GooglyEyes className="h-5 w-10" />
+              <span className="font-extrabold text-2xl tracking-tight text-[#1C1611] lowercase font-sans">
+                digital life lessons
+              </span>
             </Link>
-            <p className="text-on-surface-variant text-sm leading-relaxed mb-8">
+            <p className="text-[#1C1611]/80 text-sm font-medium leading-relaxed mb-6">
               Bridging deep editorial insight with modern productivity tools. Your
               wisdom, preserved forever.
             </p>
@@ -54,17 +59,17 @@ export default function Footer() {
             <div className="flex gap-4">
               <a
                 href="#"
-                className="w-10 h-10 rounded-full glass-card flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300"
+                className="w-10 h-10 rounded-full border-2 border-[#1C1611] bg-white flex items-center justify-center text-[#1C1611] shadow-[2px_2px_0px_0px_#1C1611] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_#1C1611] transition-all"
                 aria-label="Website"
               >
-                <Globe className="w-5 h-5 stroke-[1.75]" />
+                <Globe className="w-5 h-5 stroke-[2px]" />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 rounded-full glass-card flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300"
+                className="w-10 h-10 rounded-full border-2 border-[#1C1611] bg-white flex items-center justify-center text-[#1C1611] shadow-[2px_2px_0px_0px_#1C1611] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_#1C1611] transition-all"
                 aria-label="Contact Email"
               >
-                <Mail className="w-5 h-5 stroke-[1.75]" />
+                <Mail className="w-5 h-5 stroke-[2px]" />
               </a>
             </div>
           </motion.div>
@@ -75,32 +80,30 @@ export default function Footer() {
             className="grid grid-cols-2 gap-8 lg:col-span-1"
           >
             <div>
-              <h5 className="font-bold text-white mb-6">Platform</h5>
-              <ul className="space-y-4">
-                {["Vision", "X", "LinkedIn"].map((item) => (
+              <h5 className="font-black text-sm uppercase tracking-wider text-[#1C1611] mb-6">Platform</h5>
+              <ul className="space-y-3">
+                {["Vision", "X / Twitter", "LinkedIn"].map((item) => (
                   <li key={item}>
                     <Link
-                      href={`/${item.toLowerCase()}`}
-                      className="text-sm text-on-surface-variant hover:text-primary transition-colors duration-300 relative group inline-block"
+                      href="#"
+                      className="text-sm font-bold text-[#1C1611]/80 hover:text-[#FF4A3A] transition-colors"
                     >
                       {item}
-                      <span className="absolute bottom-0 left-0 w-0 h-px bg-primary/50 transition-all duration-300 group-hover:w-full" />
                     </Link>
                   </li>
                 ))}
               </ul>
             </div>
             <div>
-              <h5 className="font-bold text-white mb-6">Resources</h5>
-              <ul className="space-y-4">
+              <h5 className="font-black text-sm uppercase tracking-wider text-[#1C1611] mb-6">Resources</h5>
+              <ul className="space-y-3">
                 {["Support", "Terms", "Privacy"].map((item) => (
                   <li key={item}>
                     <Link
-                      href={`/${item.toLowerCase()}`}
-                      className="text-sm text-on-surface-variant hover:text-primary transition-colors duration-300 relative group inline-block"
+                      href="#"
+                      className="text-sm font-bold text-[#1C1611]/80 hover:text-[#FF4A3A] transition-colors"
                     >
                       {item}
-                      <span className="absolute bottom-0 left-0 w-0 h-px bg-primary/50 transition-all duration-300 group-hover:w-full" />
                     </Link>
                   </li>
                 ))}
@@ -110,66 +113,48 @@ export default function Footer() {
 
           {/* Column 4: Newsletter Subscription Form */}
           <motion.div variants={fadeInUp} className="lg:col-span-2">
-            <div
-              className="p-8 rounded-3xl relative overflow-hidden"
-              style={{
-                background: "rgba(255, 255, 255, 0.05)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-              }}
-            >
-              {/* Subtle glow */}
-              <div
-                className="absolute -top-10 -right-10 w-40 h-40 pointer-events-none"
-                style={{
-                  background:
-                    "radial-gradient(circle, rgba(195, 192, 255, 0.08), transparent 70%)",
-                }}
-                aria-hidden="true"
-              />
-
-              <h5 className="font-bold text-white mb-4 relative z-10">
+            <div className="p-6 sm:p-8 rounded-2xl bg-[#4DD0B1] border-[3px] border-[#1C1611] shadow-[4px_4px_0px_0px_#1C1611]">
+              <h5 className="font-black text-lg uppercase tracking-tight text-[#1C1611] mb-2">
                 Subscribe to our Reader
               </h5>
-              <p className="text-sm text-on-surface-variant mb-6 relative z-10">
+              <p className="text-sm font-bold text-[#1C1611]/80 mb-6">
                 Weekly editorial highlights delivered to your inbox.
               </p>
               <form
                 onSubmit={handleSubscribe}
-                className="flex flex-col sm:flex-row gap-3 w-full relative z-10"
+                className="flex flex-col sm:flex-row gap-3 w-full"
               >
                 <input
                   type="email"
                   placeholder="Email address"
                   required
-                  className="bg-white/5 border border-white/10 rounded-xl px-6 py-4 flex-grow focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/30 text-white placeholder-white/30 transition-all text-sm"
+                  className="bg-[#F6F0DD] border-[2.5px] border-[#1C1611] rounded-xl px-4 py-3 flex-grow text-sm text-[#1C1611] placeholder-[#1C1611]/60 focus:outline-none"
                 />
                 <button
                   type="submit"
-                  className="relative overflow-hidden bg-primary text-on-primary px-8 py-4 rounded-xl font-label-md hover:brightness-110 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5 transition-all shrink-0 active:scale-98 group"
+                  className="bg-[#FF4A3A] text-[#1C1611] font-black uppercase px-6 py-3 rounded-xl border-[2.5px] border-[#1C1611] shadow-[3px_3px_0px_0px_#1C1611] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_#1C1611] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 shrink-0 text-sm"
                 >
-                  <span className="relative z-10">Join</span>
-                  <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                  Join
                 </button>
               </form>
             </div>
           </motion.div>
         </div>
 
-        {/* Footer Sub-row Info */}
+        {/* Footer Sub-row Info - Cleanly anchored over a final horizontal dashed line */}
         <motion.div
           variants={fadeInUp}
-          className="mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-on-surface-variant"
+          className="mt-16 pt-8 border-t-[3px] border-dashed border-[#1C1611] flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold uppercase text-[#1C1611]/70"
         >
           <p>© 2024 Digital Life Lessons. All rights reserved.</p>
           <div className="flex gap-8">
             {["Cookie Policy", "Accessibility", "Status"].map((item) => (
               <Link
                 key={item}
-                href={`/${item.toLowerCase().replace(" ", "-")}`}
-                className="hover:text-primary transition-colors duration-300 relative group"
+                href="#"
+                className="hover:text-[#FF4A3A] transition-colors"
               >
                 {item}
-                <span className="absolute bottom-0 left-0 w-0 h-px bg-primary/50 transition-all duration-300 group-hover:w-full" />
               </Link>
             ))}
           </div>
