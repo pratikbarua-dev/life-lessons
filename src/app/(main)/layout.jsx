@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import MouseGlow from "@/components/MouseGlow";
+import AppLoadingGate from "@/components/AppLoadingGate";
 
 export const metadata = {
   title: "Digital Life Lessons | Preserve Your Wisdom",
@@ -15,14 +16,16 @@ export default function MainLayout({ children }) {
       className="min-h-screen flex flex-col bg-[#F6F0DD] text-[#1C1611] font-sans antialiased"
       data-theme="light"
     >
-      <SmoothScrollProvider>
-        <MouseGlow />
-        <Navbar />
+      <AppLoadingGate>
+        <SmoothScrollProvider>
+          <MouseGlow />
+          <Navbar />
 
-        <main className="flex-1">{children}</main>
+          <main className="flex-1">{children}</main>
 
-        <Footer />
-      </SmoothScrollProvider>
+          <Footer />
+        </SmoothScrollProvider>
+      </AppLoadingGate>
     </div>
   );
 }
