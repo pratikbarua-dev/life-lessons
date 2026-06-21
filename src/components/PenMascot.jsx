@@ -201,6 +201,7 @@ export default function PenMascot({
     default: "w-32 h-64 sm:w-40 sm:h-80",
     hero: "w-48 h-96 sm:w-60 sm:h-[480px]",
     loader: "w-24 h-48",
+    crying: "w-28 h-56",
   };
 
   const selectedSize = sizeClasses[variant] || sizeClasses.default;
@@ -253,6 +254,24 @@ export default function PenMascot({
           @keyframes neoDraw {
             0%, 100% { stroke-dashoffset: 200; }
             50% { stroke-dashoffset: 0; }
+          }
+          @keyframes neoTear {
+            0% {
+              transform: translateY(0) scale(0);
+              opacity: 0;
+            }
+            15% {
+              transform: translateY(2px) scale(1);
+              opacity: 1;
+            }
+            80% {
+              transform: translateY(20px) scale(0.9);
+              opacity: 1;
+            }
+            100% {
+              transform: translateY(24px) scale(0.2);
+              opacity: 0;
+            }
           }
         `}</style>
 
@@ -381,13 +400,61 @@ export default function PenMascot({
           <circle cx="69.5" cy="85" r="2.2" fill="#FFFFFF" />
         </g>
 
+        {/* Crying Eyebrows (sad wobbly look) */}
+        {variant === "crying" && (
+          <>
+            <path
+              d="M 37 75 Q 43 65 49 68"
+              stroke="var(--color-canvas-dark, #1C1611)"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+              fill="none"
+            />
+            <path
+              d="M 83 75 Q 77 65 71 68"
+              stroke="var(--color-canvas-dark, #1C1611)"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+              fill="none"
+            />
+          </>
+        )}
+
+        {/* Animated Tears for crying variant */}
+        {variant === "crying" && (
+          <>
+            {/* Left Tear */}
+            <path
+              d="M 45 99 Q 48 103 51 99 Q 51 96 48 94 Q 45 96 45 99 Z"
+              fill="#38BDF8"
+              stroke="var(--color-canvas-dark, #1C1611)"
+              strokeWidth="2.5"
+              style={{
+                transformOrigin: "48px 99px",
+                animation: "neoTear 1.8s infinite ease-in-out",
+              }}
+            />
+            {/* Right Tear */}
+            <path
+              d="M 69 99 Q 72 103 75 99 Q 75 96 72 96 Q 69 96 69 99 Z"
+              fill="#38BDF8"
+              stroke="var(--color-canvas-dark, #1C1611)"
+              strokeWidth="2.5"
+              style={{
+                transformOrigin: "72px 99px",
+                animation: "neoTear 1.8s infinite ease-in-out 0.9s",
+              }}
+            />
+          </>
+        )}
+
         {/* Tiny Cheek blushes below the eye for mascot character expression */}
         <ellipse cx="37.5" cy="98" rx="3.5" ry="1.8" fill="var(--color-accent-pink, #FFB3A7)" />
         <ellipse cx="82.5" cy="98" rx="3.5" ry="1.8" fill="var(--color-accent-pink, #FFB3A7)" />
 
-        {/* Character Smile (Cute line mouth below the eye) */}
+        {/* Character Smile / Sad Frown */}
         <path
-          d="M 53 108 Q 60 114 67 108"
+          d={variant === "crying" ? "M 54 112 Q 60 106 66 112" : "M 53 108 Q 60 114 67 108"}
           stroke="var(--color-canvas-dark, #1C1611)"
           strokeWidth="3.5"
           strokeLinecap="round"

@@ -5,10 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import GooglyEyes from "./GooglyEyes";
 import PenMascot from "./PenMascot";
+import { authClient } from "@/lib/auth-client";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session, isPending } = authClient.useSession();
+  const dashboardHref = session?.user?.role === "admin" ? "/admin/dashboard" : "/my-lessons";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -74,18 +77,34 @@ export default function Navbar() {
           {/* Desktop Authentication Actions & Mobile Toggle */}
           <div className="flex gap-2 sm:gap-4 items-center">
             <div className="hidden md:flex gap-2 sm:gap-4 items-center">
-              <Link
-                href="/login"
-                className="text-[#1C1611] font-extrabold text-sm uppercase px-4 py-2 hover:bg-[#FFB3A7] border-[2.5px] border-transparent hover:border-[#1C1611] rounded-xl transition-all duration-100"
-              >
-                login
-              </Link>
-              <Link
-                href="/get-started"
-                className="bg-[#FF4A3A] text-[#1C1611] font-black text-sm uppercase px-5 py-2.5 rounded-full border-[3px] border-[#1C1611] shadow-[3px_3px_0px_0px_#1C1611] hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 whitespace-nowrap"
-              >
-                get started
-              </Link>
+              {isPending ? (
+                <div className="flex gap-2 sm:gap-4 items-center">
+                  <div className="w-16 h-8 bg-[#1C1611]/10 rounded-xl border-[2px] border-dashed border-[#1C1611]/20 animate-pulse" />
+                  <div className="w-28 h-9 bg-[#1C1611]/10 rounded-full border-[2.5px] border-dashed border-[#1C1611]/20 animate-pulse" />
+                </div>
+              ) : session?.user ? (
+                <Link
+                  href={dashboardHref}
+                  className="bg-[#FCD34D] text-[#1C1611] font-black text-sm uppercase px-5 py-2.5 rounded-full border-[3px] border-[#1C1611] shadow-[3px_3px_0px_0px_#1C1611] hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 whitespace-nowrap"
+                >
+                  dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="text-[#1C1611] font-extrabold text-sm uppercase px-4 py-2 hover:bg-[#FFB3A7] border-[2.5px] border-transparent hover:border-[#1C1611] rounded-xl transition-all duration-100"
+                  >
+                    login
+                  </Link>
+                  <Link
+                    href="/get-started"
+                    className="bg-[#FF4A3A] text-[#1C1611] font-black text-sm uppercase px-5 py-2.5 rounded-full border-[3px] border-[#1C1611] shadow-[3px_3px_0px_0px_#1C1611] hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 whitespace-nowrap"
+                  >
+                    get started
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile/Tablet Menu Button */}
@@ -176,20 +195,37 @@ export default function Navbar() {
               ))}
 
               <div className="flex flex-col gap-3 mt-6">
-                <Link
-                  href="/login"
-                  onClick={() => setIsOpen(false)}
-                  className="text-center text-[#1C1611] border-[3px] border-[#1C1611] bg-white py-3 rounded-xl font-bold uppercase shadow-[3px_3px_0px_0px_#1C1611]"
-                >
-                  login
-                </Link>
-                <Link
-                  href="/get-started"
-                  onClick={() => setIsOpen(false)}
-                  className="text-center bg-[#FF4A3A] text-[#1C1611] border-[3px] border-[#1C1611] py-3 rounded-xl font-black uppercase shadow-[3px_3px_0px_0px_#1C1611]"
-                >
-                  get started
-                </Link>
+                {isPending ? (
+                  <div className="flex flex-col gap-3">
+                    <div className="w-full h-12 bg-[#1C1611]/10 rounded-xl border-[2.5px] border-dashed border-[#1C1611]/20 animate-pulse" />
+                    <div className="w-full h-12 bg-[#1C1611]/10 rounded-xl border-[2.5px] border-dashed border-[#1C1611]/20 animate-pulse" />
+                  </div>
+                ) : session?.user ? (
+                  <Link
+                    href={dashboardHref}
+                    onClick={() => setIsOpen(false)}
+                    className="text-center bg-[#FCD34D] text-[#1C1611] border-[3px] border-[#1C1611] py-3 rounded-xl font-black uppercase shadow-[3px_3px_0px_0px_#1C1611]"
+                  >
+                    dashboard
+                  </Link>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      onClick={() => setIsOpen(false)}
+                      className="text-center text-[#1C1611] border-[3px] border-[#1C1611] bg-white py-3 rounded-xl font-bold uppercase shadow-[3px_3px_0px_0px_#1C1611]"
+                    >
+                      login
+                    </Link>
+                    <Link
+                      href="/get-started"
+                      onClick={() => setIsOpen(false)}
+                      className="text-center bg-[#FF4A3A] text-[#1C1611] border-[3px] border-[#1C1611] py-3 rounded-xl font-black uppercase shadow-[3px_3px_0px_0px_#1C1611]"
+                    >
+                      get started
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
