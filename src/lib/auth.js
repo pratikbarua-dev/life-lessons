@@ -1,3 +1,4 @@
+
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client } from "@/db"; // your mongodb client
@@ -11,6 +12,11 @@ export const auth = betterAuth({
             role: {
                 type: "string",
                 defaultValue: "user",
+                required: true,
+            },
+            isBanned: {
+                type: "boolean",
+                defaultValue: false,
                 required: true,
             },
         }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import GooglyEyes from "@/components/GooglyEyes";
+import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,30 +14,52 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [name, setName] = useState("");
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (!email || !password) {
-      setError("Please enter your email and password.");
-      return;
-    }
+  const handleLogin = async (e) => {
+      e.preventDefault();
+      if (!name || !email || !password) {
+        setError("Please fill in all fields.");
+        return;
+      }
+  
+      setLoading(true);
+      setError("");
+  
+      try {
+        const { data, error: authError } = await authClient.signIn.email({
+          email,
+          password,
+          name,
+          callbackURL: "/home",
+        });
+        console.log("Login response:", { data, authError });
+        if (authError) {
+          setError(authError.message || "Failed to create account.");
+        } else {
+          router.push("/home");
+        }
+      } catch (err) {
+        setError("An unexpected error occurred. Please try again.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
 
-    setLoading(true);
-    setError("");
-
-    // Simulate submission - template ready for better-auth integration
-    console.log("Logging in with:", { email, password });
-
-    setTimeout(() => {
-      setLoading(false);
-      router.push("/home");
-    }, 1000);
-  };
-
-  const handleSocialLogin = (provider) => {
-    console.log("Social sign-in initiated for:", provider);
-    // Template placeholder for better-auth social integration
-  };
+  const handleSocialLogin = async (provider) => {
+      try {
+        await authClient.signIn.social({
+          provider,
+          callbackURL: "/home",
+        });
+      } catch (err) {
+        setError(`Failed to sign in with ${provider}.`);
+        console.error(err);
+      }
+    };
+  
 
   return (
     <div className="min-h-screen w-full bg-[#F6F0DD] flex flex-col items-center justify-center pt-32 sm:pt-40 pb-12 px-4 sm:px-6 font-sans text-[#1C1611]">
