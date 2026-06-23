@@ -1,11 +1,15 @@
 import { createAuthClient } from "better-auth/react";
+import { jwtClient } from "better-auth/client/plugins";
 
 
 export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  plugins: [jwtClient()],
 });
-const signIn = async () => {
+
+export const signInWithGoogle = async () => {
   const data = await authClient.signIn.social({
     provider: "google",
   });
+  return data;
 };
