@@ -22,6 +22,18 @@ const nextConfig = {
   turbopack: {
     root: __dirname,
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/backend/:path*',
+        destination: `${process.env.SERVER_URL || 'http://localhost:3100'}/api/:path*`,
+      },
+      {
+        source: '/users',
+        destination: `${process.env.SERVER_URL || 'http://localhost:3100'}/users`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

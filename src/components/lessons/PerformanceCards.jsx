@@ -1,30 +1,43 @@
 import { BarChart3, Globe, Award } from "lucide-react";
 
-const STATS_CARDS = [
-  {
-    title: "Total Engagement",
-    metric: "4.8k",
-    subtext: "↑ 12% from last month",
-    icon: BarChart3,
-    bgClass: "bg-[#4DD0B1]", // Teal
-  },
-  {
-    title: "Public Footprint",
-    metric: "18 Lessons",
-    subtext: "64% of your collection is shared",
-    icon: Globe,
-    bgClass: "bg-[#FFB3A7]", // Pink
-  },
-  {
-    title: "Reader Rank",
-    metric: "Philosopher",
-    subtext: "Next level: Stoic Master at 5k likes",
-    icon: Award,
-    bgClass: "bg-[#FCD34D]", // Yellow
-  },
-];
+export default function PerformanceCards({ stats = null }) {
+  const data = stats || {
+    totalEngagement: 0,
+    totalLessons: 0,
+    publicFootprintPercentage: 0,
+    rank: "Novice"
+  };
 
-export default function PerformanceCards() {
+  const STATS_CARDS = [
+    {
+      title: "Total Engagement",
+      metric: data.totalEngagement >= 1000 
+        ? `${(data.totalEngagement / 1000).toFixed(1)}k` 
+        : String(data.totalEngagement),
+      subtext: `Across ${data.totalLessons} lesson${data.totalLessons !== 1 ? "s" : ""}`,
+      icon: BarChart3,
+      bgClass: "bg-[#4DD0B1]", // Teal
+    },
+    {
+      title: "Public Footprint",
+      metric: `${data.publicFootprintPercentage}%`,
+      subtext: `${data.publicFootprintPercentage}% of your collection is shared`,
+      icon: Globe,
+      bgClass: "bg-[#FFB3A7]", // Pink
+    },
+    {
+      title: "Reader Rank",
+      metric: data.rank,
+      subtext: data.rank === "Stoic Master" 
+        ? "You've reached the highest rank! 🏆" 
+        : data.rank === "Philosopher"
+          ? "Next level: Stoic Master at 5k likes"
+          : "Next level: Philosopher at 1k likes",
+      icon: Award,
+      bgClass: "bg-[#FCD34D]", // Yellow
+    },
+  ];
+
   return (
     <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
       {STATS_CARDS.map((card, index) => {

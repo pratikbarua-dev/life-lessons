@@ -20,6 +20,11 @@ export const auth = betterAuth({
                 defaultValue: false,
                 required: true,
             },
+            isPremium: {
+                type: "boolean",
+                defaultValue: false,
+                required: true,
+            },
         }
     },
     emailAndPassword: {
@@ -39,26 +44,31 @@ export const auth = betterAuth({
             updateUserInfoOnLink: true
         }
     },
-    plugins: [
-        jwt({
-            secret: process.env.JWT_SECRET,
-            // Add this to map the user's role into the JWT
-            jwt: {
-                payload: ({ user }) => {
-                    return {
-                        role: user.role,
-                        isBanned: user.isBanned,
-                    };
-                },
-            },
-        })
-    ],
     session: {
+        cookieCache: {
+            enabled: true,
+            options: {
+                strategy: "jwt",
+                maxAge: 60 * 60 * 24 * 7, // 7 days
+            }
+        },
         schema: {
             // This ensures the properties are explicitly recognized during session lookups
             role: "string",
-            isBanned: "boolean"
+            isBanned: "boolean",
+            isPremium: "boolean"
         }
-    }
-
+    },
+    plugins: [
+        jwt({
+            // Add this to map the user's role into the JWT
+            jwt: {
+                payload: ({ user }) => ({
+                    role: user.role,
+                    isBanned: user.isBanned,
+                    isPremium: user.isPremium,
+                }),
+            },
+        })
+    ]
 });

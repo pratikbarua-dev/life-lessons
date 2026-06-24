@@ -1,22 +1,57 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Search, ChevronDown, SlidersHorizontal, RotateCcw } from "lucide-react";
 
 export default function LessonsSearchFilters({
   variant = "dashboard",
   placeholder = "Search your notebook...",
+  availableCategories = [],
+  availableTones = []
 }) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [category, setCategory] = useState("All Categories");
-  const [tone, setTone] = useState("Any Tone");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
+  const [category, setCategory] = useState(searchParams.get("category") || "All Categories");
+  const [tone, setTone] = useState(searchParams.get("emotionalTone") || "Any Tone");
   const [activeFilter, setActiveFilter] = useState("All Lessons");
   const [activeSort, setActiveSort] = useState("Newest First");
+
+
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    if (searchQuery) params.set("search", searchQuery);
+    else params.delete("search");
+
+    if (category && category !== "All Categories") params.set("category", category);
+    else params.delete("category");
+
+    if (tone && tone !== "Any Tone") params.set("emotionalTone", tone);
+    else params.delete("emotionalTone");
+
+    // Default to page 1 on filter change
+    params.set("page", "1");
+
+    const timer = setTimeout(() => {
+      // Avoid pushing if parameters haven't effectively changed
+      if (params.toString() !== searchParams.toString()) {
+        router.push(`${pathname}?${params.toString()}`, { scroll: false });
+      }
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, category, tone, pathname, router]);
 
   const handleClearFilters = () => {
     setSearchQuery("");
     setCategory("All Categories");
     setTone("Any Tone");
+    router.push(pathname, { scroll: false });
   };
 
   // ── Dashboard variant: compact search + pill buttons ──
@@ -86,9 +121,11 @@ export default function LessonsSearchFilters({
             className="h-11 bg-[#F6F0DD] border-[2.5px] border-[#1C1611] text-[#1C1611] font-black uppercase text-xs rounded-xl focus:outline-none pr-10 pl-4 w-full sm:w-48 appearance-none cursor-pointer shadow-[2px_2px_0px_0px_#1C1611] transition-all"
           >
             <option value="All Categories" className="bg-[#F6F0DD] text-[#1C1611] font-black uppercase">All Categories</option>
-            <option value="Productivity" className="bg-[#F6F0DD] text-[#1C1611] font-black uppercase">Productivity</option>
-            <option value="Leadership" className="bg-[#F6F0DD] text-[#1C1611] font-black uppercase">Leadership</option>
-            <option value="Philosophy" className="bg-[#F6F0DD] text-[#1C1611] font-black uppercase">Philosophy</option>
+            {availableCategories.map((cat) => (
+              <option key={cat} value={cat} className="bg-[#F6F0DD] text-[#1C1611] font-black uppercase">
+                {cat}
+              </option>
+            ))}
           </select>
           <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#1C1611]">
             <ChevronDown className="w-4 h-4 stroke-[2.5px]" />
@@ -104,9 +141,11 @@ export default function LessonsSearchFilters({
             className="h-11 bg-[#F6F0DD] border-[2.5px] border-[#1C1611] text-[#1C1611] font-black uppercase text-xs rounded-xl focus:outline-none pr-10 pl-4 w-full sm:w-44 appearance-none cursor-pointer shadow-[2px_2px_0px_0px_#1C1611] transition-all"
           >
             <option value="Any Tone" className="bg-[#F6F0DD] text-[#1C1611] font-black uppercase">Any Tone</option>
-            <option value="Analytical" className="bg-[#F6F0DD] text-[#1C1611] font-black uppercase">Analytical</option>
-            <option value="Reflective" className="bg-[#F6F0DD] text-[#1C1611] font-black uppercase">Reflective</option>
-            <option value="Motivational" className="bg-[#F6F0DD] text-[#1C1611] font-black uppercase">Motivational</option>
+            {availableTones.map((t) => (
+              <option key={t} value={t} className="bg-[#F6F0DD] text-[#1C1611] font-black uppercase">
+                {t}
+              </option>
+            ))}
           </select>
           <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#1C1611]">
             <SlidersHorizontal className="w-3.5 h-3.5 stroke-[2.5px]" />
