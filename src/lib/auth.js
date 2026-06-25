@@ -3,6 +3,7 @@ import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client } from "@/db"; //  mongodb client
 import { jwt } from "better-auth/plugins";
+import { stripe } from "@better-auth/stripe";
 
 const db = client.db("life-lessons");
 export const auth = betterAuth({
@@ -69,6 +70,11 @@ export const auth = betterAuth({
                     isPremium: user.isPremium,
                 }),
             },
-        })
+        }),
+        stripe({
+            stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+            webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+            createCustomerOnSignUp: true, // magic!
+        }),
     ]
 });
