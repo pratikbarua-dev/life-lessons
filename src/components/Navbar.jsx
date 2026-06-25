@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Star } from "lucide-react";
 import GooglyEyes from "./GooglyEyes";
 import PenMascot from "./PenMascot";
@@ -11,6 +11,9 @@ import { authClient } from "@/lib/auth-client";
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  
   const { data: session, isPending } = authClient.useSession();
   const dashboardHref = session?.user?.role === "admin" ? "/admin/dashboard" : "/my-lessons";
 
@@ -20,6 +23,16 @@ export default function Navbar() {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleLogout = async () => {
@@ -94,24 +107,69 @@ export default function Navbar() {
                   <div className="w-28 h-9 bg-[#1C1611]/10 rounded-full border-[2.5px] border-dashed border-[#1C1611]/20 animate-pulse" />
                 </div>
               ) : session?.user ? (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 relative" ref={dropdownRef}>
                   {session.user.isPremium && (
                     <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 bg-[#4DD0B1] text-[#1C1611] border-[2.5px] border-[#1C1611] rounded-full shadow-[2px_2px_0px_0px_#1C1611] text-[10px] font-black uppercase tracking-widest" title="Premium Account">
                       <Star className="w-3.5 h-3.5 fill-[#1C1611]" /> Premium
                     </div>
                   )}
-                  <Link
-                    href={dashboardHref}
-                    className="bg-[#FCD34D] text-[#1C1611] font-black text-sm uppercase px-5 py-2.5 rounded-full border-[3px] border-[#1C1611] shadow-[3px_3px_0px_0px_#1C1611] hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 whitespace-nowrap"
-                  >
-                    dashboard
-                  </Link>
+                  
+                  {/* User Avatar Button */}
                   <button
-                    onClick={handleLogout}
-                    className="text-[#1C1611] font-extrabold text-sm uppercase px-4 py-2 hover:bg-[#FFB3A7] border-[2.5px] border-transparent hover:border-[#1C1611] rounded-xl transition-all duration-100"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="relative w-10 h-10 rounded-full border-[3px] border-[#1C1611] bg-[#FF4A3A] overflow-hidden shadow-[2px_2px_0px_0px_#1C1611] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_#1C1611] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all focus:outline-none"
                   >
-                    logout
+                    {session.user.image ? (
+                      <img src={session.user.image} alt={session.user.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-white font-black text-lg uppercase">
+                        {session.user.name?.charAt(0) || '?'}
+                      </div>
+                    )}
                   </button>
+
+                  {/* Dropdown Menu */}
+                  <AnimatePresence>
+                    {isDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.15, ease: "easeOut" }}
+                        className="absolute top-14 right-0 min-w-[200px] bg-white border-[3px] border-[#1C1611] rounded-xl shadow-[4px_4px_0px_0px_#1C1611] flex flex-col p-2 z-50"
+                      >
+                        <div className="px-3 py-2 border-b-[2.5px] border-[#1C1611]/10 mb-2">
+                           <span className="block text-sm font-black text-[#1C1611] truncate">{session.user.name}</span>
+                           <span className="block text-[10px] font-bold text-[#1C1611]/60 truncate uppercase mt-0.5">{session.user.email}</span>
+                        </div>
+                        
+                        <Link
+                          href={session.user.role === 'admin' ? '/admin/profile' : '/settings'}
+                          onClick={() => setIsDropdownOpen(false)}
+                          className="px-3 py-2 text-xs font-black uppercase text-[#1C1611] hover:bg-[#FFB3A7] rounded-lg transition-colors flex items-center gap-2"
+                        >
+                          Profile
+                        </Link>
+                        
+                        <Link
+                          href={dashboardHref}
+                          onClick={() => setIsDropdownOpen(false)}
+                          className="px-3 py-2 text-xs font-black uppercase text-[#1C1611] hover:bg-[#FCD34D] rounded-lg transition-colors flex items-center gap-2"
+                        >
+                          Dashboard
+                        </Link>
+                        
+                        <div className="h-[2.5px] w-full bg-[#1C1611]/10 my-1.5" />
+                        
+                        <button
+                          onClick={() => { setIsDropdownOpen(false); handleLogout(); }}
+                          className="w-full text-left px-3 py-2 text-xs font-black uppercase text-[#FF4A3A] hover:bg-[#FF4A3A]/10 rounded-lg transition-colors"
+                        >
+                          Logout
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ) : (
                 <>
@@ -226,6 +284,13 @@ export default function Navbar() {
                   </div>
                 ) : session?.user ? (
                   <>
+                    <Link
+                      href={session.user.role === 'admin' ? '/admin/profile' : '/settings'}
+                      onClick={() => setIsOpen(false)}
+                      className="text-center bg-[#FFB3A7] text-[#1C1611] border-[3px] border-[#1C1611] py-3 rounded-xl font-black uppercase shadow-[3px_3px_0px_0px_#1C1611]"
+                    >
+                      profile
+                    </Link>
                     <Link
                       href={dashboardHref}
                       onClick={() => setIsOpen(false)}
