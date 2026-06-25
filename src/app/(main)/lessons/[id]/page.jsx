@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { ArrowLeft, Bookmark, Heart, MessageSquare, Send, ShieldAlert, Sparkles, Trash2, Flag } from "lucide-react";
+import { ArrowLeft, Bookmark, Heart, MessageSquare, Send, ShieldAlert, Sparkles, Trash2, Flag, Lock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { toast } from "react-toastify";
