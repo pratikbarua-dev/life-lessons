@@ -9,6 +9,10 @@ const db = client.db("life-lessons");
 export const auth = betterAuth({
     database: mongodbAdapter(db, { client }),
     baseURL: process.env.BETTER_AUTH_URL,
+    trustedOrigins: [
+        "https://life-lessons-cyan.vercel.app",
+        "http://localhost:3000"
+    ],
     user: {
         additionalFields: {
             role: {
