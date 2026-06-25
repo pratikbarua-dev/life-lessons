@@ -7,6 +7,7 @@ import { ArrowLeft, Bookmark, Heart, MessageSquare, Send, ShieldAlert, Sparkles,
 import Link from "next/link";
 import Image from "next/image";
 import { toast } from "react-toastify";
+import { ShareButton } from "@/components/lessons";
 
 export default function LessonDetailPage() {
   const { id } = useParams();
@@ -393,16 +394,19 @@ export default function LessonDetailPage() {
             <ArrowLeft className="w-4 h-4 stroke-[3px]" />
           </Link>
           
-          {/* Bookmark/Save button */}
-          {lesson.accessLevel !== "Premium" && !lesson.isPremium && (
-            <button
-              onClick={handleToggleSave}
-              className={`w-10 h-10 rounded-xl border-2 border-[#1C1611] flex items-center justify-center shadow-[2.5px_2.5px_0px_0px_#1C1611] hover:translate-x-[0.5px] hover:translate-y-[0.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[1.5px] active:translate-y-[1.5px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 cursor-pointer ${isSaved ? "bg-[#FF4A3A] text-white" : "bg-white text-[#1C1611]"}`}
-              aria-label="Bookmark lesson"
-            >
-              <Bookmark className={`w-4 h-4 ${isSaved ? "fill-white" : "stroke-current stroke-[2.5px]"}`} />
-            </button>
-          )}
+          <div className="flex items-center gap-3">
+            <ShareButton lessonId={id} title={lesson?.title} direction="down" />
+            {/* Bookmark/Save button */}
+            {lesson.accessLevel !== "Premium" && !lesson.isPremium && (
+              <button
+                onClick={handleToggleSave}
+                className={`w-10 h-10 rounded-xl border-2 border-[#1C1611] flex items-center justify-center shadow-[2.5px_2.5px_0px_0px_#1C1611] hover:translate-x-[0.5px] hover:translate-y-[0.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[1.5px] active:translate-y-[1.5px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 cursor-pointer ${isSaved ? "bg-[#FF4A3A] text-white" : "bg-white text-[#1C1611]"}`}
+                aria-label="Bookmark lesson"
+              >
+                <Bookmark className={`w-4 h-4 ${isSaved ? "fill-white" : "stroke-current stroke-[2.5px]"}`} />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Lesson Wrapper */}

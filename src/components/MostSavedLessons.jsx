@@ -59,7 +59,7 @@ export default function MostSavedLessons({ lessons = [] }) {
     return {
       id: lesson._id,
       title: lesson.title,
-      description: lesson.content ? lesson.content.substring(0, 100) + "..." : "No description available.",
+      description: lesson.description ? lesson.description.substring(0, 100) + "..." : "No description available.",
       author: lesson.authorName || "Anonymous",
       authorHref: `/user/${lesson.creatorId}`,
       date: new Date(lesson.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),

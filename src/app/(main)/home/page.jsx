@@ -10,6 +10,11 @@ import React from "react";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+
+export const metadata = {
+  title: "Home",
+};
+
 async function getFeaturedLessons() {
   try {
     const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';

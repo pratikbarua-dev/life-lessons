@@ -1,5 +1,10 @@
 import { Save, RefreshCw, Server, ShieldCheck, Database } from "lucide-react";
 
+
+export const metadata = {
+  title: "Settings",
+};
+
 export default function SystemSettingsPage() {
     return (
         <div className="w-full min-h-screen bg-[#0a0a0a] text-[#e0e3e5] p-4 sm:p-6 md:p-10 select-none">

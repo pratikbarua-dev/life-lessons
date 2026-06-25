@@ -5,6 +5,8 @@ import { ChevronDown, Smile, Image as ImageIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
+import Image from "next/image";
+import UpgradeModal from "./UpgradeModal";
 
 export default function LessonEditorForm({ lessonId = null }) {
   const router = useRouter();
@@ -19,6 +21,7 @@ export default function LessonEditorForm({ lessonId = null }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
 
   const isEditMode = Boolean(lessonId);
 
@@ -122,7 +125,11 @@ export default function LessonEditorForm({ lessonId = null }) {
         );
         router.push("/my-lessons");
       } else {
-        toast.error(data.message || "Something went wrong.");
+        if (data.requiresUpgrade) {
+          setIsUpgradeModalOpen(true);
+        } else {
+          toast.error(data.message || "Something went wrong.");
+        }
       }
     } catch (err) {
       console.error("Error saving lesson:", err);
@@ -180,6 +187,7 @@ export default function LessonEditorForm({ lessonId = null }) {
   }
 
   return (
+    <>
     <form onSubmit={(e) => handleSubmit(e, false)} className="w-full flex flex-col flex-grow gap-8">
 
       {/* Dropdown Selection Row */}
@@ -190,11 +198,11 @@ export default function LessonEditorForm({ lessonId = null }) {
           <label className="text-[10px] font-black uppercase tracking-widest text-[#1C1611]/70">
             Category
           </label>
-          <div className="relative w-full">
+          <div className="w-full">
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full h-11 bg-[#F6F0DD] border-[2.5px] border-[#1C1611] rounded-xl px-4 text-xs font-black uppercase text-[#1C1611] focus:outline-none appearance-none cursor-pointer shadow-[2px_2px_0px_0px_#1C1611] transition-all"
+              className="w-full h-11 bg-[#F6F0DD] border-[2.5px] border-[#1C1611] rounded-xl px-4 text-xs font-black uppercase text-[#1C1611] focus:outline-none cursor-pointer shadow-[2px_2px_0px_0px_#1C1611] transition-all"
             >
               <option value="Philosophy & Ethics" className="bg-[#F6F0DD] text-[#1C1611]">Philosophy & Ethics</option>
               <option value="Productivity" className="bg-[#F6F0DD] text-[#1C1611]">Productivity</option>
@@ -205,7 +213,6 @@ export default function LessonEditorForm({ lessonId = null }) {
               <option value="Relationships" className="bg-[#F6F0DD] text-[#1C1611]">Relationships</option>
               <option value="Career" className="bg-[#F6F0DD] text-[#1C1611]">Career</option>
             </select>
-            <ChevronDown className="w-4 h-4 text-[#1C1611] absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5px]" />
           </div>
         </div>
 
@@ -214,11 +221,11 @@ export default function LessonEditorForm({ lessonId = null }) {
           <label className="text-[10px] font-black uppercase tracking-widest text-[#1C1611]/70">
             Emotional Tone
           </label>
-          <div className="relative w-full">
+          <div className="w-full">
             <select
               value={tone}
               onChange={(e) => setTone(e.target.value)}
-              className="w-full h-11 bg-[#F6F0DD] border-[2.5px] border-[#1C1611] rounded-xl px-4 text-xs font-black uppercase text-[#1C1611] focus:outline-none appearance-none cursor-pointer shadow-[2px_2px_0px_0px_#1C1611] transition-all"
+              className="w-full h-11 bg-[#F6F0DD] border-[2.5px] border-[#1C1611] rounded-xl px-4 text-xs font-black uppercase text-[#1C1611] focus:outline-none cursor-pointer shadow-[2px_2px_0px_0px_#1C1611] transition-all"
             >
               <option value="Contemplative" className="bg-[#F6F0DD] text-[#1C1611]">Contemplative</option>
               <option value="Analytical" className="bg-[#F6F0DD] text-[#1C1611]">Analytical</option>
@@ -226,7 +233,6 @@ export default function LessonEditorForm({ lessonId = null }) {
               <option value="Reflective" className="bg-[#F6F0DD] text-[#1C1611]">Reflective</option>
               <option value="Inspirational" className="bg-[#F6F0DD] text-[#1C1611]">Inspirational</option>
             </select>
-            <Smile className="w-4 h-4 text-[#1C1611] absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none stroke-[2.5px]" />
           </div>
         </div>
       </div>
@@ -237,7 +243,7 @@ export default function LessonEditorForm({ lessonId = null }) {
         <div className="w-full flex flex-col gap-3">
           {coverImage ? (
             <div className="relative w-full h-48 md:h-64 rounded-xl border-[3px] border-[#1C1611] overflow-hidden shadow-[4px_4px_0px_0px_#1C1611]">
-              <img src={coverImage} alt="Cover" className="w-full h-full object-cover" />
+              <Image src={coverImage} alt="Cover" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
               <button
                 type="button"
                 onClick={() => setCoverImage("")}
@@ -320,5 +326,10 @@ export default function LessonEditorForm({ lessonId = null }) {
       </footer>
 
     </form>
+      <UpgradeModal 
+        isOpen={isUpgradeModalOpen} 
+        onClose={() => setIsUpgradeModalOpen(false)} 
+      />
+    </>
   );
 }

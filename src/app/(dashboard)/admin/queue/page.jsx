@@ -3,6 +3,11 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+
+export const metadata = {
+  title: "Queue",
+};
+
 async function getAdminReports(headersList) {
     try {
         const tokenRes = await fetch('http://localhost:3000/api/auth/token', { headers: headersList, cache: 'no-store' });

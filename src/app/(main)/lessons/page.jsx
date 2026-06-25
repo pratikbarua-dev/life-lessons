@@ -4,6 +4,11 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 // Move fetch outside or keep inside, but call it here
+
+export const metadata = {
+  title: "Lessons",
+};
+
 async function getLessons(searchParams) {
   const headersList = await headers();
   

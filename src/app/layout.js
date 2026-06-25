@@ -13,8 +13,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Digital Life Lessons",
-  description: "Preserve your wisdom for future generations.",
+  title: {
+    default: "Digital Life Lessons",
+    template: "%s | Digital Life Lessons"
+  },
+  description: "Preserve your wisdom, document your journey, and share life lessons for future generations.",
+  openGraph: {
+    title: "Digital Life Lessons",
+    description: "Preserve your wisdom for future generations.",
+    siteName: "Digital Life Lessons",
+    type: "website",
+  }
 };
 
 export default function RootLayout({ children }) {

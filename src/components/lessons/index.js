@@ -12,3 +12,6 @@ export { default as UpgradePlanCard } from "./UpgradePlanCard";
 export { default as VisibilityToggle } from "./VisibilityToggle";
 export { default as PremiumOverlay } from "./PremiumOverlay";
 export { default as StatsChart } from "./StatsChart";
+export { default as UpgradeModal } from "./UpgradeModal";
+export { default as NewLessonButton } from "./NewLessonButton";
+export { default as ShareButton } from "./ShareButton";

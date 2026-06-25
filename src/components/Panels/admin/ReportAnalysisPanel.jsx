@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X, ShieldAlert } from "lucide-react";
+import Image from "next/image";
 
 export default function ReportAnalysisPanel() {
     const [selectedCase, setSelectedCase] = useState({
@@ -93,10 +94,12 @@ export default function ReportAnalysisPanel() {
             {/* Editorial Quote Image Display Module Card */}
             <div className="w-full bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden relative group shadow-xl">
                 <div className="aspect-video w-full bg-neutral-900 relative">
-                    <img
+                    <Image
                         src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?q=80&w=400&auto=format&fit=crop"
                         alt="Editorial workspace overview"
-                        className="object-cover w-full h-full opacity-45 mix-blend-luminosity group-hover:scale-105 transition-transform duration-700"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover opacity-45 mix-blend-luminosity group-hover:scale-105 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 flex flex-col justify-end">
                         <p className="text-sm font-serif italic text-white font-semibold">

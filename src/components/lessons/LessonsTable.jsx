@@ -1,11 +1,40 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Edit2, Trash2, Heart, Bookmark } from "lucide-react";
 import VisibilityToggle from "./VisibilityToggle";
 
 export default function LessonsTable({ lessons = [], onDelete }) {
-  if (lessons.length === 0) {
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search")?.toLowerCase() || "";
+  const filter = searchParams.get("filter") || "All Lessons";
+  const sort = searchParams.get("sort") || "Newest First";
+
+  let filteredLessons = [...lessons];
+
+  // Apply search and filter
+  filteredLessons = filteredLessons.filter(row => {
+    // Search
+    if (search && !row.title?.toLowerCase().includes(search) && !row.category?.toLowerCase().includes(search)) {
+      return false;
+    }
+    // Filter
+    if (filter === "Public Only" && row.visibility !== "Public") return false;
+    if (filter === "Private Only" && row.visibility === "Public") return false;
+    return true;
+  });
+
+  // Apply Sort
+  filteredLessons.sort((a, b) => {
+    if (sort === "Newest First") return new Date(b.createdAt) - new Date(a.createdAt);
+    if (sort === "Oldest First") return new Date(a.createdAt) - new Date(b.createdAt);
+    if (sort === "Most Liked") return (b.likesCount || 0) - (a.likesCount || 0);
+    if (sort === "Most Saved") return (b.savesCount || 0) - (a.savesCount || 0);
+    return 0;
+  });
+
+  if (filteredLessons.length === 0) {
     return (
       <div className="w-full bg-[#F6F0DD] border-[3.5px] border-[#1C1611] rounded-2xl shadow-[6px_6px_0px_0px_#1C1611] mb-8 p-12 text-center">
         <p className="text-sm font-black uppercase text-[#1C1611]/60">
@@ -42,7 +71,7 @@ export default function LessonsTable({ lessons = [], onDelete }) {
             </tr>
           </thead>
           <tbody className="divide-y-2 divide-[#1C1611]">
-            {lessons.map((row, idx) => {
+            {filteredLessons.map((row, idx) => {
               const lessonId = row._id || row.id;
               const isPublic = row.visibility === "Public";
               const createdDate = row.createdAt

@@ -2,6 +2,11 @@ import ContentSafetyCounters from "@/components/Panels/admin/ContentSafetyCounte
 import ModerationQueueTable from "@/components/Panels/admin/ModerationQueueTable";
 import ReportAnalysisPanel from "@/components/Panels/admin/ReportAnalysisPanel";
 
+
+export const metadata = {
+  title: "Safety",
+};
+
 export default function ContentSafetyDashboardPage() {
     return (
         <div className="w-full min-h-screen bg-[#0a0a0a] text-[#e0e3e5] p-4 sm:p-6 md:p-10 select-none flex flex-col justify-between gap-16">

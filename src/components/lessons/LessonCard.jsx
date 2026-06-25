@@ -9,6 +9,7 @@ import PremiumOverlay from "./PremiumOverlay";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import ShareButton from "./ShareButton";
 
 export default function LessonCard({ lesson, isSaved = false, onToggleSave }) {
   const { data: session } = authClient.useSession();
@@ -58,11 +59,11 @@ export default function LessonCard({ lesson, isSaved = false, onToggleSave }) {
   return (
     <motion.article
       variants={fadeInUp}
-      className="relative rounded-2xl flex flex-col justify-between overflow-hidden group min-h-[460px] bg-[#F6F0DD] border-[3.5px] border-[#1C1611] shadow-[5px_5px_0px_0px_#1C1611] hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-[3.5px_3.5px_0px_0px_#1C1611] transition-all duration-150"
+      className="relative rounded-2xl flex flex-col justify-between group min-h-[460px] bg-[#F6F0DD] border-[3.5px] border-[#1C1611] shadow-[5px_5px_0px_0px_#1C1611] hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-[3.5px_3.5px_0px_0px_#1C1611] transition-all duration-150"
     >
       <div>
         {/* Image wrapper */}
-        <div className="relative w-full aspect-[16/9] overflow-hidden border-b-[3.5px] border-[#1C1611]">
+        <div className="relative w-full aspect-[16/9] overflow-hidden rounded-t-[calc(1rem-3.5px)] border-b-[3.5px] border-[#1C1611]">
           <Image
             src={lesson.imageUrl || "/pen-and-notebook.jpg"}
             alt={lesson.title || "Lesson thumbnail"}
@@ -143,6 +144,8 @@ export default function LessonCard({ lesson, isSaved = false, onToggleSave }) {
               >
                 <MessageSquare className="w-4 h-4 stroke-[#1C1611] stroke-[2px]" />
               </Link>
+
+              <ShareButton lessonId={lesson._id || lesson.id} title={lesson.title} />
             </>
           )}
 

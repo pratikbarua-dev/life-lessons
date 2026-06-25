@@ -1,6 +1,11 @@
 import { Shield, Mail, Key, Activity, Calendar } from "lucide-react";
 import Image from "next/image";
 
+
+export const metadata = {
+  title: "Profile",
+};
+
 const SECURITY_LOGS = [
     { id: 1, action: "Authorized API Tier Bump", target: "@system_core", time: "2 hours ago" },
     { id: 2, action: "Suspended User Account", target: "UID-89412", time: "Yesterday at 14:22" },
@@ -26,10 +31,12 @@ export default function AdminProfilePage() {
                 <div className="w-full bg-white/[0.04] border border-white/10 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-6 shadow-xl">
                     {/* Avatar Container */}
                     <div className="w-20 h-20 rounded-full border-2 border-[#c3c0ff]/30 relative overflow-hidden bg-white/5 shrink-0 shadow-lg">
-                        <img
+                        <Image
                             src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=150&auto=format&fit=crop"
                             alt="Marcus Thorne Profile Avatar"
-                            className="object-cover w-full h-full"
+                            fill
+                            sizes="80px"
+                            className="object-cover"
                         />
                     </div>
 

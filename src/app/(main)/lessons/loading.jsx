@@ -1,13 +1,15 @@
+import Image from "next/image";
+
 export default function LessonsLoading() {
   return (
     <div className="w-full min-h-[80vh] flex flex-col items-center justify-center bg-[#F6F0DD]">
       <div className="relative animate-bounce">
         <div className="w-40 h-40 relative rounded-2xl overflow-hidden border-[4px] border-[#1C1611] shadow-[6px_6px_0px_0px_#1C1611] bg-white flex items-center justify-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img 
+          <Image 
             src="/thinking-pen.png" 
             alt="Thinking pen loader" 
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
           />
         </div>
         {/* Floating thought bubbles */}
