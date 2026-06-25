@@ -11,8 +11,7 @@ export default function UpgradeButton() {
       const tokenRes = await authClient.token();
       const token = tokenRes?.data?.token;
       
-      const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3100';
-      const response = await fetch(`${serverUrl}/api/create-checkout-session`, {
+      const response = await fetch('/api/backend/create-checkout-session', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
