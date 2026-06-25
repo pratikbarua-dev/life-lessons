@@ -1,11 +1,43 @@
-import { Save, RefreshCw, Server, ShieldCheck, Database } from "lucide-react";
-
+import { Save, RefreshCw, Server, ShieldCheck, Database, Globe, Users, FileText } from "lucide-react";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const metadata = {
-  title: "Settings",
+  title: "System Settings",
 };
 
-export default function SystemSettingsPage() {
+async function getPlatformStats(headersList) {
+    try {
+        const cookie = headersList.get('cookie') || '';
+        const tokenRes = await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/token`, { headers: cookie ? { cookie } : {}, cache: 'no-store' });
+        const token = tokenRes.ok ? (await tokenRes.json())?.token : "";
+        if (!token) return null;
+
+        const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
+        const res = await fetch(`${serverUrl}/api/admin/stats`, {
+            headers: { "Authorization": `Bearer ${token}` },
+            cache: 'no-store'
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.success ? data.stats : null;
+    } catch (err) {
+        console.error("Error fetching platform stats:", err);
+        return null;
+    }
+}
+
+export default async function SystemSettingsPage() {
+    const headersList = await headers();
+    const session = await auth.api.getSession({ headers: headersList });
+
+    if (!session || session.user.role !== 'admin') {
+        redirect("/home");
+    }
+
+    const stats = await getPlatformStats(headersList);
+
     return (
         <div className="w-full min-h-screen bg-[#0a0a0a] text-[#e0e3e5] p-4 sm:p-6 md:p-10 select-none">
             <div className="max-w-4xl mx-auto w-full flex flex-col gap-8">
@@ -19,38 +51,76 @@ export default function SystemSettingsPage() {
                         System Settings
                     </h1>
                     <p className="text-xs text-[#c7c4d8]/40 font-sans font-light mt-1.5">
-                        Adjust network-wide parameters, switch security parameters, clear caches, and toggle public verification systems.
+                        Platform overview and system configuration.
                     </p>
                 </header>
 
-                {/* Configuration Sections Stacks */}
+                {/* Configuration Sections */}
                 <div className="flex flex-col gap-6 w-full font-sans text-xs">
 
-                    {/* Box 1: Platform Core Flags */}
+                    {/* Platform Overview */}
                     <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 flex flex-col gap-5">
                         <h3 className="text-sm font-serif font-bold text-white flex items-center gap-2 tracking-tight">
-                            <Server className="w-4 h-4 text-[#c3c0ff]" /> Global Core Variables
+                            <Server className="w-4 h-4 text-[#c3c0ff]" /> Platform Overview
+                        </h3>
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {[
+                                { label: "Total Users", value: stats?.totalUsers ?? '—', icon: Users, color: "text-[#4DD0B1]" },
+                                { label: "Public Lessons", value: stats?.totalPublicLessons ?? '—', icon: Globe, color: "text-[#FCD34D]" },
+                                { label: "Private Drafts", value: stats?.totalDrafts ?? '—', icon: FileText, color: "text-[#c3c0ff]" },
+                                { label: "Pending Reports", value: stats?.pendingReports ?? '—', icon: ShieldCheck, color: "text-[#FF4A3A]" },
+                            ].map((item) => (
+                                <div key={item.label} className="bg-white/[0.02] border border-white/5 rounded-xl p-4 flex flex-col gap-2">
+                                    <item.icon className={`w-4 h-4 ${item.color}`} />
+                                    <span className="text-2xl font-bold text-white">{item.value}</span>
+                                    <span className="text-[10px] text-[#c7c4d8]/40 font-light uppercase tracking-wider">{item.label}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Environment Info */}
+                    <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 flex flex-col gap-5">
+                        <h3 className="text-sm font-serif font-bold text-white flex items-center gap-2 tracking-tight">
+                            <Database className="w-4 h-4 text-[#c3c0ff]" /> Environment
                         </h3>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="flex flex-col gap-2">
-                                <label className="text-[10px] font-bold tracking-wider text-[#c7c4d8]/40 uppercase">Platform Environment Mode</label>
-                                <input type="text" readOnly value="Production / Stable" className="h-10 bg-white/[0.02] border border-white/5 rounded-xl px-4 text-[#c7c4d8]/60 cursor-not-allowed outline-none" />
+                                <label className="text-[10px] font-bold tracking-wider text-[#c7c4d8]/40 uppercase">Platform Environment</label>
+                                <div className="h-10 bg-white/[0.02] border border-white/5 rounded-xl px-4 flex items-center text-[#4DD0B1] font-medium">
+                                    Production / Stable
+                                </div>
                             </div>
                             <div className="flex flex-col gap-2">
-                                <label className="text-[10px] font-bold tracking-wider text-[#c7c4d8]/40 uppercase">Maximum Daily Upload Bounds</label>
-                                <input type="text" defaultValue="50MB / user" className="h-10 bg-white/[0.04] border border-white/10 rounded-xl px-4 text-white focus:border-[#c3c0ff] outline-none" />
+                                <label className="text-[10px] font-bold tracking-wider text-[#c7c4d8]/40 uppercase">Auth Provider</label>
+                                <div className="h-10 bg-white/[0.02] border border-white/5 rounded-xl px-4 flex items-center text-[#c7c4d8]/60">
+                                    Better-Auth + Google OAuth
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-[10px] font-bold tracking-wider text-[#c7c4d8]/40 uppercase">Payment Gateway</label>
+                                <div className="h-10 bg-white/[0.02] border border-white/5 rounded-xl px-4 flex items-center text-[#c7c4d8]/60">
+                                    Stripe (Test Mode)
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-[10px] font-bold tracking-wider text-[#c7c4d8]/40 uppercase">Database</label>
+                                <div className="h-10 bg-white/[0.02] border border-white/5 rounded-xl px-4 flex items-center text-[#c7c4d8]/60">
+                                    MongoDB Atlas
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Box 2: System Maintenance / Operation Triggers */}
+                    {/* Cache Controls */}
                     <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 flex flex-col gap-5">
                         <h3 className="text-sm font-serif font-bold text-white flex items-center gap-2 tracking-tight">
-                            <Database className="w-4 h-4 text-[#c3c0ff]" /> Cache & Operational Pipeline Routing
+                            <RefreshCw className="w-4 h-4 text-[#c3c0ff]" /> Cache & Pipeline Controls
                         </h3>
                         <p className="text-[#c7c4d8]/40 font-light leading-normal -mt-2">
-                            Flushing active memory caches or execution tables immediately terminates active visitor sessions.
+                            Operational actions for cache management and system verification.
                         </p>
 
                         <div className="flex flex-wrap items-center gap-3 pt-2">
@@ -61,13 +131,6 @@ export default function SystemSettingsPage() {
                                 <ShieldCheck className="w-3.5 h-3.5" /> Force Route Verification
                             </button>
                         </div>
-                    </div>
-
-                    {/* Footer Save Row Trigger */}
-                    <div className="w-full border-t border-white/5 pt-4 flex justify-end">
-                        <button className="h-11 px-6 bg-[#c3c0ff] hover:bg-[#b0adfa] text-[#1d00a5] font-bold text-sm rounded-xl shadow-lg transition-all duration-200 active:scale-[0.98] flex items-center gap-2 cursor-pointer">
-                            <Save className="w-4 h-4 stroke-[2.5]" /> Commit Configurations
-                        </button>
                     </div>
 
                 </div>
