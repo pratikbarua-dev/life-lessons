@@ -16,7 +16,7 @@ async function getAdminReports(headersList) {
 
         const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
         
-        const res = await fetch(`/api/backend/admin/reports`, { 
+        const res = await fetch(`${process.env.SERVER_URL || 'http://localhost:3100'}/api/admin/reports`, { 
             headers: { "Authorization": `Bearer ${token}` }, 
             cache: 'no-store' 
         });

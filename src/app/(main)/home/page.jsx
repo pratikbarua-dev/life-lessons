@@ -18,7 +18,7 @@ export const metadata = {
 async function getFeaturedLessons() {
   try {
     const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
-    const res = await fetch(`/api/backend/lessons/featured`, { cache: 'no-store' });
+    const res = await fetch(`${process.env.SERVER_URL || 'http://localhost:3100'}/api/lessons/featured`, { cache: 'no-store' });
     const data = await res.json();
     return data?.success ? data.data : [];
   } catch (err) {
@@ -30,7 +30,7 @@ async function getFeaturedLessons() {
 async function getTopContributors() {
   try {
     const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
-    const res = await fetch(`/api/backend/users/top-contributors`, { cache: 'no-store' });
+    const res = await fetch(`${process.env.SERVER_URL || 'http://localhost:3100'}/api/users/top-contributors`, { cache: 'no-store' });
     const data = await res.json();
     return data?.success ? data.data : [];
   } catch (err) {
@@ -42,7 +42,7 @@ async function getTopContributors() {
 async function getMostSavedLessons() {
   try {
     const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
-    const res = await fetch(`/api/backend/lessons/most-saved`, { cache: 'no-store' });
+    const res = await fetch(`${process.env.SERVER_URL || 'http://localhost:3100'}/api/lessons/most-saved`, { cache: 'no-store' });
     const data = await res.json();
     return data?.success ? data.data : [];
   } catch (err) {

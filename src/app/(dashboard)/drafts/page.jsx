@@ -23,7 +23,7 @@ async function getMyDrafts(userId, headersList) {
     if (!token) return [];
 
     const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
-    const res = await fetch(`/api/backend/users/${userId}/drafts`, {
+    const res = await fetch(`${process.env.SERVER_URL || 'http://localhost:3100'}/api/users/${userId}/drafts`, {
       headers: { "Authorization": `Bearer ${token}` },
       cache: 'no-store'
     });
