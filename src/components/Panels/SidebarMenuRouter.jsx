@@ -1,19 +1,39 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import SidebarLink from "./SidebarLink";
 import UpgradePlanCard from "@/components/lessons/UpgradePlanCard";
 
 export default function SidebarMenuRouter({ userMenu, adminMenu, isMobileMenuOpen, onClose }) {
   const pathname = usePathname();
+  const [isNavigating, setIsNavigating] = useState(false);
 
   // Dynamically determine context by checking if the path contains '/admin'
   const isAdmin = pathname?.startsWith("/admin");
   const activeMenuGroups = isAdmin ? adminMenu : userMenu;
 
+  useEffect(() => {
+    setIsNavigating(false);
+  }, [pathname]);
+
+  const handleLinkClick = (href) => {
+    if (pathname !== href) {
+      setIsNavigating(true);
+    }
+    onClose();
+  };
+
   return (
     <>
+      {/* Global Navigation Overlay */}
+      {isNavigating && (
+        <div className="fixed inset-0 z-[100] bg-[#F6F0DD]/80 backdrop-blur-sm flex items-center justify-center">
+          <div className="w-12 h-12 border-4 border-[#1C1611] border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
+
       {/* Mobile Backdrop */}
       {isMobileMenuOpen && (
         <div 
@@ -59,7 +79,7 @@ export default function SidebarMenuRouter({ userMenu, adminMenu, isMobileMenuOpe
 
             <nav className="flex flex-col gap-1.5 w-full">
               {group.items.map((item, iIdx) => (
-                <SidebarLink key={iIdx} item={item} onClick={onClose} />
+                <SidebarLink key={iIdx} item={item} onClick={() => handleLinkClick(item.href)} />
               ))}
             </nav>
 
