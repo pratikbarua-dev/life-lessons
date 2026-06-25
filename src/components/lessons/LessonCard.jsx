@@ -126,7 +126,7 @@ export default function LessonCard({ lesson, isSaved = false, onToggleSave }) {
         </div>
 
         <div className="flex items-center gap-2 mt-4">
-          {!isPremiumLesson && (
+          {!isLocked && (
             <>
               <button
                 onClick={handleToggleLike}
@@ -149,7 +149,7 @@ export default function LessonCard({ lesson, isSaved = false, onToggleSave }) {
             </>
           )}
 
-          {!isPremiumLesson && onToggleSave && (
+          {!isLocked && onToggleSave && (
             <button
               onClick={(e) => onToggleSave(lesson._id || lesson.id, e)}
               className="w-9 h-9 rounded-lg border-2 border-[#1C1611] bg-white flex items-center justify-center text-[#1C1611] shadow-[2px_2px_0px_0px_#1C1611] hover:translate-x-[0.5px] hover:translate-y-[0.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[1.5px] active:translate-y-[1.5px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100"
