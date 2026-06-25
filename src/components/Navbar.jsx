@@ -48,7 +48,7 @@ export default function Navbar() {
   };
 
   const navLinks = [
-    { name: "home", href: "/" },
+    { name: "home", href: "/home" },
     { name: "public lessons", href: "/lessons" },
     { name: "add lesson", href: "/add-lesson" },
     { name: "my lessons", href: "/my-lessons" },
