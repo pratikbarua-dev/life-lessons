@@ -13,55 +13,29 @@ export const metadata = {
 };
 
 async function getAdminData(headersList) {
-    const debug = {
-        BETTER_AUTH_URL: process.env.BETTER_AUTH_URL || "NOT SET",
-        SERVER_URL: process.env.SERVER_URL || "NOT SET",
-    };
     try {
-        const tokenUrl = `${process.env.BETTER_AUTH_URL}/api/auth/token`;
-        debug.tokenUrl = tokenUrl;
-        
-        // Next.js 15 returns read-only headers - extract cookie into a plain object
         const cookie = headersList.get('cookie') || '';
-        const fetchHeaders = cookie ? { cookie } : {};
-        
-        const tokenRes = await fetch(tokenUrl, { headers: fetchHeaders, cache: 'no-store' });
-        debug.tokenStatus = tokenRes.status;
-        debug.tokenOk = tokenRes.ok;
-        
-        const tokenBody = tokenRes.ok ? await tokenRes.json() : null;
-        const token = tokenBody?.token || "";
-        debug.hasToken = !!token;
-        debug.tokenLength = token.length;
-        
-        if (!token) return { stats: null, reports: [], debug };
+        const tokenRes = await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/token`, { headers: cookie ? { cookie } : {}, cache: 'no-store' });
+        const token = tokenRes.ok ? (await tokenRes.json())?.token : "";
+        if (!token) return { stats: null, reports: [] };
 
         const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
-        debug.statsUrl = `${serverUrl}/api/admin/stats`;
         
         const [statsRes, reportsRes] = await Promise.all([
             fetch(`${serverUrl}/api/admin/stats`, { headers: { "Authorization": `Bearer ${token}` }, cache: 'no-store' }),
             fetch(`${serverUrl}/api/admin/reports`, { headers: { "Authorization": `Bearer ${token}` }, cache: 'no-store' })
         ]);
 
-        debug.statsStatus = statsRes.status;
-        debug.reportsStatus = reportsRes.status;
-
         const statsData = statsRes.ok ? await statsRes.json() : null;
         const reportsData = reportsRes.ok ? await reportsRes.json() : null;
-        
-        debug.statsSuccess = statsData?.success;
-        debug.reportsSuccess = reportsData?.success;
 
         return {
             stats: statsData?.success ? statsData.stats : null,
-            reports: reportsData?.success ? reportsData.data : [],
-            debug
+            reports: reportsData?.success ? reportsData.data : []
         };
     } catch (err) {
-        debug.error = err.message;
         console.error("Error fetching admin data:", err);
-        return { stats: null, reports: [], debug };
+        return { stats: null, reports: [] };
     }
 }
 
@@ -73,15 +47,11 @@ export default async function AdminDashboardPage() {
         redirect("/home");
     }
 
-    const { stats, reports, debug } = await getAdminData(headersList);
+    const { stats, reports } = await getAdminData(headersList);
     return (
         <div className="w-full min-h-screen bg-[#F6F0DD] text-[#1C1611] p-4 sm:p-6 md:p-10 select-none flex flex-col gap-8 font-sans">
             <div className="max-w-7xl mx-auto w-full flex flex-col gap-8">
 
-                {/* TEMPORARY DEBUG - REMOVE AFTER FIX */}
-                <pre className="bg-black text-green-400 p-4 rounded-xl text-xs overflow-auto whitespace-pre-wrap">
-                    {JSON.stringify(debug, null, 2)}
-                </pre>
                 {/* Global Admin Header Nav Area */}
                 <header className="flex flex-row items-center justify-between gap-4 border-b-[3.5px] border-[#1C1611] pb-6">
                     <div>
