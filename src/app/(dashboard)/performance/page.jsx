@@ -11,7 +11,7 @@ export const metadata = {
 
 async function getStats(userId, headersList) {
   try {
-    const tokenRes = await fetch('http://localhost:3000/api/auth/token', {
+    const tokenRes = await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/token`, {
       headers: headersList,
       cache: 'no-store'
     });

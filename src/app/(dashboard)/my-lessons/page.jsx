@@ -13,7 +13,7 @@ export const metadata = {
 async function getMyLessons(userId, headersList) {
   try {
     // Get the JWT token server-side
-    const tokenRes = await fetch('http://localhost:3000/api/auth/token', {
+    const tokenRes = await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/token`, {
       headers: headersList,
       cache: 'no-store'
     });
@@ -40,7 +40,7 @@ async function getMyLessons(userId, headersList) {
 
 async function getMyStats(userId, headersList) {
   try {
-    const tokenRes = await fetch('http://localhost:3000/api/auth/token', {
+    const tokenRes = await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/token`, {
       headers: headersList,
       cache: 'no-store'
     });

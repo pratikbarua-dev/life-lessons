@@ -15,7 +15,7 @@ async function getLessons(searchParams) {
   // Try to retrieve the user's JWT token on the server
   let token = "";
   try {
-    const tokenRes = await fetch('http://localhost:3000/api/auth/token', {
+    const tokenRes = await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/token`, {
       headers: headersList,
       cache: 'no-store'
     });
