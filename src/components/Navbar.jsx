@@ -189,7 +189,7 @@ export default function Navbar() {
                     login
                   </Link>
                   <Link
-                    href="/get-started"
+                    href="/signup"
                     className="bg-[#FF4A3A] text-[#1C1611] font-black text-sm uppercase px-5 py-2.5 rounded-full border-[3px] border-[#1C1611] shadow-[3px_3px_0px_0px_#1C1611] hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 whitespace-nowrap"
                   >
                     get started
@@ -331,7 +331,7 @@ export default function Navbar() {
                       login
                     </Link>
                     <Link
-                      href="/get-started"
+                      href="/signup"
                       onClick={() => setIsOpen(false)}
                       className="text-center bg-[#FF4A3A] text-[#1C1611] border-[3px] border-[#1C1611] py-3 rounded-xl font-black uppercase shadow-[3px_3px_0px_0px_#1C1611]"
                     >
