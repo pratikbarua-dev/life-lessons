@@ -38,11 +38,13 @@ const ADMIN_MENU_GROUPS = [
     },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ isMobileMenuOpen, setIsMobileMenuOpen }) {
     return (
         <SidebarMenuRouter
             userMenu={USER_MENU_GROUPS}
             adminMenu={ADMIN_MENU_GROUPS}
+            isMobileMenuOpen={isMobileMenuOpen}
+            onClose={() => setIsMobileMenuOpen(false)}
         />
     );
 }

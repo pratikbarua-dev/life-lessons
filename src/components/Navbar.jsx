@@ -22,6 +22,16 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleLogout = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          window.location.href = "/login";
+        },
+      },
+    });
+  };
+
   const navLinks = [
     { name: "home", href: "/" },
     { name: "public lessons", href: "/lessons" },
@@ -96,6 +106,12 @@ export default function Navbar() {
                   >
                     dashboard
                   </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="text-[#1C1611] font-extrabold text-sm uppercase px-4 py-2 hover:bg-[#FFB3A7] border-[2.5px] border-transparent hover:border-[#1C1611] rounded-xl transition-all duration-100"
+                  >
+                    logout
+                  </button>
                 </div>
               ) : (
                 <>
@@ -209,13 +225,21 @@ export default function Navbar() {
                     <div className="w-full h-12 bg-[#1C1611]/10 rounded-xl border-[2.5px] border-dashed border-[#1C1611]/20 animate-pulse" />
                   </div>
                 ) : session?.user ? (
-                  <Link
-                    href={dashboardHref}
-                    onClick={() => setIsOpen(false)}
-                    className="text-center bg-[#FCD34D] text-[#1C1611] border-[3px] border-[#1C1611] py-3 rounded-xl font-black uppercase shadow-[3px_3px_0px_0px_#1C1611]"
-                  >
-                    dashboard
-                  </Link>
+                  <>
+                    <Link
+                      href={dashboardHref}
+                      onClick={() => setIsOpen(false)}
+                      className="text-center bg-[#FCD34D] text-[#1C1611] border-[3px] border-[#1C1611] py-3 rounded-xl font-black uppercase shadow-[3px_3px_0px_0px_#1C1611]"
+                    >
+                      dashboard
+                    </Link>
+                    <button
+                      onClick={() => { setIsOpen(false); handleLogout(); }}
+                      className="text-center text-[#1C1611] border-[3px] border-[#1C1611] bg-white py-3 rounded-xl font-bold uppercase shadow-[3px_3px_0px_0px_#1C1611]"
+                    >
+                      logout
+                    </button>
+                  </>
                 ) : (
                   <>
                     <Link

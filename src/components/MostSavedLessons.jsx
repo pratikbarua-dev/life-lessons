@@ -49,11 +49,25 @@ const SAVED_LESSONS = [
   },
 ];
 
-export default function MostSavedLessons() {
+export default function MostSavedLessons({ lessons = [] }) {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
+
+  const displayLessons = lessons.length > 0 ? lessons.slice(0, 3).map((lesson) => {
+    return {
+      id: lesson._id,
+      title: lesson.title,
+      description: lesson.content ? lesson.content.substring(0, 100) + "..." : "No description available.",
+      author: lesson.authorName || "Anonymous",
+      authorHref: `/user/${lesson.creatorId}`,
+      date: new Date(lesson.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      saveCount: lesson.savedCount || 0,
+      imageUrl: lesson.imageUrl || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop",
+      href: `/lessons/${lesson._id}`,
+    };
+  }) : SAVED_LESSONS;
 
   return (
     <section className="py-20 relative w-full bg-[#F6F0DD] text-[#1C1611]">
@@ -81,7 +95,7 @@ export default function MostSavedLessons() {
           animate={inView ? "visible" : "hidden"}
           className="grid grid-cols-1 md:grid-cols-3 gap-10 w-full"
         >
-          {SAVED_LESSONS.map((lesson) => (
+          {displayLessons.map((lesson) => (
             <motion.article
               key={lesson.id}
               variants={fadeInUp}

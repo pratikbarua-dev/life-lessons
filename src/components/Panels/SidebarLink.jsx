@@ -23,7 +23,7 @@ const COMPREHENSIVE_ICON_MAP = {
   profile: UserCog,
 };
 
-export default function SidebarLink({ item }) {
+export default function SidebarLink({ item, onClick }) {
   const pathname = usePathname();
   const isActive = pathname === item.href;
 
@@ -32,6 +32,7 @@ export default function SidebarLink({ item }) {
   return (
     <Link
       href={item.href}
+      onClick={onClick}
       className={`relative w-full h-11 rounded-xl flex items-center gap-3.5 px-4 font-black uppercase text-xs transition-all duration-100 select-none ${
         isActive
           ? "bg-[#FF4A3A] text-white border-2 border-[#1C1611] shadow-[2px_2px_0px_0px_#1C1611]"

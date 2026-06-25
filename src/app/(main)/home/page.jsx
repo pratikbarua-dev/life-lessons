@@ -10,23 +10,65 @@ import React from "react";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+async function getFeaturedLessons() {
+  try {
+    const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
+    const res = await fetch(`${serverUrl}/api/lessons/featured`, { cache: 'no-store' });
+    const data = await res.json();
+    return data?.success ? data.data : [];
+  } catch (err) {
+    console.error("Error fetching featured lessons:", err);
+    return [];
+  }
+}
+
+async function getTopContributors() {
+  try {
+    const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
+    const res = await fetch(`${serverUrl}/api/users/top-contributors`, { cache: 'no-store' });
+    const data = await res.json();
+    return data?.success ? data.data : [];
+  } catch (err) {
+    console.error("Error fetching top contributors:", err);
+    return [];
+  }
+}
+
+async function getMostSavedLessons() {
+  try {
+    const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
+    const res = await fetch(`${serverUrl}/api/lessons/most-saved`, { cache: 'no-store' });
+    const data = await res.json();
+    return data?.success ? data.data : [];
+  } catch (err) {
+    console.error("Error fetching most saved lessons:", err);
+    return [];
+  }
+}
+
 export default async function HomePage() {
   const session = await auth.api.getSession({
     headers: await headers()
   });
-  console.log(session)
+  
+  const [featuredLessons, topContributors, mostSavedLessons] = await Promise.all([
+    getFeaturedLessons(),
+    getTopContributors(),
+    getMostSavedLessons()
+  ]);
+
   return (
     <>
       <HeroSection />
       <StatsSection />
       <SectionDivider />
-      <FeaturedLessons />
+      <FeaturedLessons lessons={featuredLessons} />
       <SectionDivider />
       <ReflectionFeatures />
       <SectionDivider />
-      <TopContributors />
+      <TopContributors contributors={topContributors} />
       <SectionDivider />
-      <MostSavedLessons />
+      <MostSavedLessons lessons={mostSavedLessons} />
       <SectionDivider />
       <CallToAction />
     </>

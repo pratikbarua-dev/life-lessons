@@ -46,11 +46,28 @@ const LESSONS_DATA = [
   },
 ];
 
-export default function FeaturedLessons() {
+export default function FeaturedLessons({ lessons = [] }) {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
+
+  const displayLessons = lessons.length > 0 ? lessons.slice(0, 3).map((lesson, idx) => {
+    const bgClasses = ["bg-[#F6F0DD]", "bg-[#4DD0B1]", "bg-[#FFB3A7]"];
+    
+    return {
+      id: lesson._id,
+      category: lesson.category || "General",
+      readTime: `${Math.max(1, Math.ceil((lesson.content?.length || 0) / 1000))} min read`,
+      title: lesson.title,
+      description: lesson.content ? lesson.content.substring(0, 120) + "..." : "No description available.",
+      imageUrl: lesson.imageUrl || "https://images.unsplash.com/photo-1519817650390-64a93db51149?q=80&w=600&auto=format&fit=crop",
+      href: `/lessons/${lesson._id}`,
+      bgClass: bgClasses[idx % 3],
+      authorName: lesson.authorName || "Anonymous",
+      authorPhotoURL: lesson.authorPhotoURL || lesson.authorImage || ""
+    };
+  }) : LESSONS_DATA;
 
   return (
     <section className="py-20 px-gutter max-w-7xl mx-auto w-full relative bg-[#F6F0DD] text-[#1C1611]">
@@ -87,7 +104,7 @@ export default function FeaturedLessons() {
         animate={inView ? "visible" : "hidden"}
         className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full"
       >
-        {LESSONS_DATA.map((lesson) => (
+        {displayLessons.map((lesson) => (
           <motion.article
             key={lesson.id}
             variants={fadeInUp}
@@ -127,11 +144,26 @@ export default function FeaturedLessons() {
                 {lesson.description}
               </p>
 
-              {/* Arrow link block at the bottom */}
+              {/* Arrow link block & Author at the bottom */}
               <div className="mt-auto pt-4 border-t border-[#1C1611]/15 flex items-center justify-between">
+                {lesson.authorName && (
+                  <div className="flex items-center gap-2">
+                    {lesson.authorPhotoURL ? (
+                      <div className="w-6 h-6 rounded-full overflow-hidden border-[1.5px] border-[#1C1611]">
+                        <Image src={lesson.authorPhotoURL} alt={lesson.authorName} width={24} height={24} className="object-cover" />
+                      </div>
+                    ) : (
+                      <div className="w-6 h-6 rounded-full bg-[#FCD34D] border-[1.5px] border-[#1C1611] flex items-center justify-center text-[8px] font-black uppercase text-[#1C1611]">
+                        {lesson.authorName.charAt(0)}
+                      </div>
+                    )}
+                    <span className="text-xs font-bold text-[#1C1611]/80">{lesson.authorName}</span>
+                  </div>
+                )}
+                
                 <Link 
                   href={lesson.href} 
-                  className="font-black uppercase text-xs tracking-wider flex items-center gap-2 hover:text-[#FF4A3A] group-hover:translate-x-1 transition-all duration-150"
+                  className="font-black uppercase text-xs tracking-wider flex items-center gap-2 hover:text-[#FF4A3A] group-hover:translate-x-1 transition-all duration-150 ml-auto"
                 >
                   <span>read lesson</span>
                   <ArrowRight className="w-4 h-4 stroke-[2.5px]" />

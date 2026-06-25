@@ -54,11 +54,25 @@ const CONTRIBUTORS_DATA = [
   },
 ];
 
-export default function TopContributors() {
+export default function TopContributors({ contributors = [] }) {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.15,
   });
+
+  const displayContributors = contributors.length > 0 ? contributors.map((person, idx) => {
+    const bgClasses = ["bg-[#4DD0B1]", "bg-[#FFB3A7]", "bg-[#FCD34D]", "bg-[#F6F0DD]"];
+    return {
+      id: person._id,
+      name: person.name || "Anonymous",
+      lessonsCount: person.lessonCount || 0,
+      verified: person.verified || false, // Assuming you might add this later
+      memberSince: "2024", // Dummy data since backend doesn't return this yet
+      avatarUrl: person.photoURL || person.image || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=150&auto=format&fit=crop",
+      profileHref: `/user/${person._id}`,
+      bgClass: bgClasses[idx % 4],
+    };
+  }) : CONTRIBUTORS_DATA;
 
   return (
     <section className="py-20 w-full relative bg-[#F6F0DD] text-[#1C1611]">
@@ -86,7 +100,7 @@ export default function TopContributors() {
           animate={inView ? "visible" : "hidden"}
           className="flex gap-6 overflow-x-auto pb-10 scroll-hide -mx-gutter px-gutter w-full"
         >
-          {CONTRIBUTORS_DATA.map((person) => (
+          {displayContributors.map((person) => (
             <motion.div key={person.id} variants={fadeInUp} className="flex-shrink-0">
               <Link
                 href={person.profileHref}
