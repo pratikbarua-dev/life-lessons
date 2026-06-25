@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { ArrowLeft, Bookmark, Heart, MessageSquare, Send, ShieldAlert, Sparkles, Trash2 } from "lucide-react";
+import { ArrowLeft, Bookmark, Heart, MessageSquare, Send, ShieldAlert, Sparkles, Trash2, Flag } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { toast } from "react-toastify";
@@ -25,6 +25,10 @@ export default function LessonDetailPage() {
   const [submittingComment, setSubmittingComment] = useState(false);
   const [error, setError] = useState("");
   const [isLocked, setIsLocked] = useState(false);
+
+  // Report Modal State
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportReason, setReportReason] = useState("");
 
   useEffect(() => {
     if (!id) return;
@@ -185,6 +189,54 @@ export default function LessonDetailPage() {
       }
     } catch (err) {
       console.error("Error toggling save:", err);
+    }
+  };
+
+  const handleReportClick = () => {
+    if (!session?.user) {
+      router.push("/login");
+      return;
+    }
+    setShowReportModal(true);
+  };
+
+  const handleReportSubmit = async (e) => {
+    e.preventDefault();
+    if (!reportReason) {
+      toast.error("Please select a reason for reporting.");
+      return;
+    }
+
+    try {
+      const tokenRes = await authClient.token();
+      const token = tokenRes?.data?.token;
+      if (!token) return;
+
+      const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3100';
+      const res = await fetch(`${serverUrl}/api/reports`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          lessonId: id,
+          reporterUserId: session.user.id,
+          reportedUserEmail: "Author details unavailable",
+          reason: reportReason
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Lesson has been reported. Thank you.");
+        setShowReportModal(false);
+        setReportReason("");
+      } else {
+        toast.error(data.message || "Failed to report lesson.");
+      }
+    } catch (err) {
+      console.error("Error reporting lesson:", err);
+      toast.error("An error occurred while reporting.");
     }
   };
 
@@ -429,6 +481,15 @@ export default function LessonDetailPage() {
                 <Heart className={`w-4 h-4 ${isLiked ? "fill-[#FF4A3A] stroke-[#FF4A3A]" : "stroke-current stroke-[2.5px]"}`} />
                 <span>{likesCount} {likesCount === 1 ? "Like" : "Likes"}</span>
               </button>
+              
+              {/* Report Button */}
+              <button 
+                onClick={handleReportClick}
+                className={`ml-auto flex items-center gap-2 px-4 py-2 border-2 border-[#1C1611] rounded-xl font-black text-xs uppercase bg-white text-[#1C1611] shadow-[2.5px_2.5px_0px_0px_#1C1611] hover:translate-x-[0.5px] hover:translate-y-[0.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[1.5px] active:translate-y-[1.5px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 cursor-pointer hover:bg-red-50 hover:text-red-600`}
+              >
+                <Flag className="w-4 h-4 stroke-[2.5px]" />
+                <span>Report</span>
+              </button>
             </div>
 
           </div>
@@ -523,6 +584,64 @@ export default function LessonDetailPage() {
         </section>
 
       </div>
+
+      {/* Report Modal */}
+      {showReportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1C1611]/60 backdrop-blur-sm">
+          <div className="w-full max-w-md bg-white border-[3.5px] border-[#1C1611] rounded-3xl shadow-[8px_8px_0px_0px_#1C1611] overflow-hidden flex flex-col">
+            <div className="bg-[#FFB3A7] border-b-[3.5px] border-[#1C1611] p-5 flex items-center gap-3">
+              <ShieldAlert className="w-6 h-6 text-[#FF4A3A] stroke-[2.5px]" />
+              <h2 className="text-xl font-black uppercase text-[#1C1611] tracking-tight">Report Lesson</h2>
+            </div>
+            
+            <form onSubmit={handleReportSubmit} className="p-6 flex flex-col gap-5">
+              <p className="text-sm font-bold text-[#1C1611]/80">
+                Help us understand what's wrong with this lesson. Your report will be reviewed by our moderation team.
+              </p>
+              
+              <div className="flex flex-col gap-2">
+                <label htmlFor="reportReason" className="text-xs font-black uppercase tracking-wider text-[#1C1611]">
+                  Select Reason
+                </label>
+                <select
+                  id="reportReason"
+                  value={reportReason}
+                  onChange={(e) => setReportReason(e.target.value)}
+                  className="w-full bg-[#F6F0DD] border-[2.5px] border-[#1C1611] rounded-xl px-4 py-3 text-sm font-bold text-[#1C1611] focus:outline-none shadow-[3px_3px_0px_0px_#1C1611] appearance-none"
+                  required
+                >
+                  <option value="" disabled>Choose a category...</option>
+                  <option value="Inappropriate Content">Inappropriate Content</option>
+                  <option value="Spam or Misleading">Spam or Misleading</option>
+                  <option value="Harassment or Hate Speech">Harassment or Hate Speech</option>
+                  <option value="Intellectual Property Violation">Intellectual Property Violation</option>
+                  <option value="Low Quality / Plagiarism">Low Quality / Plagiarism</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 mt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowReportModal(false);
+                    setReportReason("");
+                  }}
+                  className="px-5 py-2.5 rounded-xl font-black text-xs uppercase bg-white text-[#1C1611] border-[2.5px] border-[#1C1611] shadow-[2.5px_2.5px_0px_0px_#1C1611] hover:translate-x-[0.5px] hover:translate-y-[0.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[1.5px] active:translate-y-[1.5px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-xl font-black text-xs uppercase bg-[#FF4A3A] text-white border-[2.5px] border-[#1C1611] shadow-[2.5px_2.5px_0px_0px_#1C1611] hover:translate-x-[0.5px] hover:translate-y-[0.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[1.5px] active:translate-y-[1.5px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 cursor-pointer"
+                >
+                  Submit Report
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

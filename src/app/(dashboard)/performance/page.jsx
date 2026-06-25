@@ -1,5 +1,5 @@
 import { BarChart3 } from "lucide-react";
-import { PerformanceCards } from "@/components/lessons";
+import { PerformanceCards, StatsChart } from "@/components/lessons";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -66,6 +66,8 @@ export default async function PerformancePage() {
         {/* Stats Cards */}
         <main className="w-full min-w-0">
           <PerformanceCards stats={stats} />
+          
+          <StatsChart data={stats?.topLessons} />
 
           {/* Additional context section */}
           <div className="mt-8 bg-white border-[3px] border-[#1C1611] rounded-2xl p-8 shadow-[4px_4px_0px_0px_#1C1611]">

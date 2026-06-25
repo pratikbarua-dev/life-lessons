@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { LessonsTable, PerformanceCards, LessonsSearchFilters } from "@/components/lessons";
+import { LessonsTable, PerformanceCards, LessonsSearchFilters, StatsChart } from "@/components/lessons";
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -111,6 +111,7 @@ export default async function MyLessonsDashboardPage() {
         <main className="w-full flex flex-col gap-6 min-w-0">
           <LessonsTable lessons={lessons} />
           <PerformanceCards stats={stats} />
+          <StatsChart data={stats?.topLessons} />
         </main>
 
       </div>

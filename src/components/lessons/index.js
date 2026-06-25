@@ -11,3 +11,4 @@ export { default as PerformanceCards } from "./PerformanceCards";
 export { default as UpgradePlanCard } from "./UpgradePlanCard";
 export { default as VisibilityToggle } from "./VisibilityToggle";
 export { default as PremiumOverlay } from "./PremiumOverlay";
+export { default as StatsChart } from "./StatsChart";

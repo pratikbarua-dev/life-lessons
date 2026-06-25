@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Eye, EyeOff, BookOpen, Globe, User, Mail, Lock } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, BookOpen, Globe, User, Mail, Lock, Image as ImageIcon } from "lucide-react";
+import { toast } from "react-toastify";
 import GooglyEyes from "@/components/GooglyEyes";
 import { authClient } from "@/lib/auth-client";
 
@@ -12,8 +13,10 @@ export default function SignupPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [image, setImage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [error, setError] = useState("");
 
   const handleSignup = async (e) => {
@@ -31,6 +34,7 @@ export default function SignupPage() {
         email,
         password,
         name,
+        image: image || undefined,
         callbackURL: "/home",
       });
 
@@ -44,6 +48,42 @@ export default function SignupPage() {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      setIsUploadingImage(true);
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
+      if (!apiKey) {
+        toast.error("ImgBB API key is missing. Please add NEXT_PUBLIC_IMGBB_API_KEY to .env");
+        setIsUploadingImage(false);
+        return;
+      }
+
+      const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setImage(data.data.url);
+        toast.success("Profile photo uploaded! 📸");
+      } else {
+        toast.error("Failed to upload image.");
+      }
+    } catch (err) {
+      console.error("Image upload error:", err);
+      toast.error("An error occurred during upload.");
+    } finally {
+      setIsUploadingImage(false);
     }
   };
 
@@ -134,6 +174,36 @@ export default function SignupPage() {
                 ⚠️ {error}
               </div>
             )}
+
+            {/* Profile Image Uploader */}
+            <div className="flex flex-col items-center justify-center mb-6 mt-2">
+              <div className="relative w-24 h-24 rounded-full border-[3px] border-[#1C1611] bg-[#f7f9fb] shadow-[4px_4px_0px_0px_#1C1611] flex items-center justify-center overflow-hidden group">
+                {image ? (
+                  <>
+                    <img src={image} alt="Profile" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setImage("")}
+                      className="absolute inset-0 bg-black/60 text-white font-black text-[10px] uppercase tracking-widest flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                    >
+                      Remove
+                    </button>
+                  </>
+                ) : (
+                  <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-[#F6F0DD]/50 transition-colors">
+                    <input type="file" accept="image/*" onChange={handleImageUpload} disabled={isUploadingImage} className="hidden" />
+                    {isUploadingImage ? (
+                      <div className="w-6 h-6 border-[3px] border-[#1C1611] border-t-[#FF4A3A] rounded-full animate-spin" />
+                    ) : (
+                      <div className="flex flex-col items-center gap-1.5 mt-1">
+                        <ImageIcon className="w-6 h-6 text-[#1C1611]/40 stroke-[2.5px]" />
+                        <span className="text-[8px] font-black uppercase tracking-wider text-[#1C1611]/50">Photo</span>
+                      </div>
+                    )}
+                  </label>
+                )}
+              </div>
+            </div>
 
             {/* Full Name */}
             <div className="space-y-1.5">

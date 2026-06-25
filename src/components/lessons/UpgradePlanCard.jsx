@@ -1,6 +1,29 @@
+import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 
+
 export default function UpgradePlanCard() {
+  const sessionData = authClient.useSession();
+
+  // Destructure the properties from the object returned by the hook
+  const { data: session, isPending } = sessionData;
+
+  // 1. Handle loading state
+  if (isPending) {
+    return (
+      <div className="w-full h-20 bg-gray-200 border-[2.5px] border-gray-300 rounded-lg animate-pulse" />
+    );
+  }
+
+  // 2. Handle missing session
+  if (!session) {
+    return null;
+  }
+
+  // 3. Now it is safe to destructure the user
+  const { user } = session;
+
+  if (user?.isPremium) return null;
   return (
     <div className="w-full bg-[#FCD34D] border-[2.5px] border-[#1C1611] rounded-xl p-4 flex flex-col gap-4 mt-auto shadow-[3px_3px_0px_0px_#1C1611]">
       <div>
