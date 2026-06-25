@@ -22,8 +22,7 @@ export default function BannedScreen({ appealStatus: initialAppealStatus }) {
             const tokenRes = await authClient.token();
             const token = tokenRes?.data?.token;
 
-            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3100';
-            const res = await fetch(`${serverUrl}/api/users/appeal`, {
+                        const res = await fetch(`/api/backend/users/appeal`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

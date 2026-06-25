@@ -21,8 +21,8 @@ async function getAdminData(headersList) {
         const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
         
         const [statsRes, reportsRes] = await Promise.all([
-            fetch(`${serverUrl}/api/admin/stats`, { headers: { "Authorization": `Bearer ${token}` }, cache: 'no-store' }),
-            fetch(`${serverUrl}/api/admin/reports`, { headers: { "Authorization": `Bearer ${token}` }, cache: 'no-store' })
+            fetch(`/api/backend/admin/stats`, { headers: { "Authorization": `Bearer ${token}` }, cache: 'no-store' }),
+            fetch(`/api/backend/admin/reports`, { headers: { "Authorization": `Bearer ${token}` }, cache: 'no-store' })
         ]);
 
         const statsData = statsRes.ok ? await statsRes.json() : null;

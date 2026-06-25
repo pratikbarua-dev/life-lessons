@@ -19,10 +19,9 @@ export default function ModerationFeed({ reports }) {
             const token = tokenRes?.data?.token;
             if (!token) return;
 
-            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3100';
-            
+                        
             if (confirmAction.type === 'remove') {
-                const res = await fetch(`${serverUrl}/api/admin/lessons/${confirmAction.report.lessonId}`, {
+                const res = await fetch(`/api/backend/admin/lessons/${confirmAction.report.lessonId}`, {
                     method: "DELETE",
                     headers: { "Authorization": `Bearer ${token}` }
                 });
@@ -34,7 +33,7 @@ export default function ModerationFeed({ reports }) {
                     return;
                 }
             } else if (confirmAction.type === 'dismiss') {
-                const res = await fetch(`${serverUrl}/api/admin/reports/${confirmAction.report._id}`, {
+                const res = await fetch(`/api/backend/admin/reports/${confirmAction.report._id}`, {
                     method: "DELETE",
                     headers: { "Authorization": `Bearer ${token}` }
                 });

@@ -27,8 +27,7 @@ export default function ManageUsersPage() {
                 setToken(jwt);
 
                 if (jwt) {
-                    const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3100';
-                    const res = await fetch(`${serverUrl}/api/admin/users?search=${encodeURIComponent(debouncedSearch)}`, {
+                                        const res = await fetch(`/api/backend/admin/users?search=${encodeURIComponent(debouncedSearch)}`, {
                         headers: { "Authorization": `Bearer ${jwt}` }
                     });
                     if (res.ok) {
@@ -48,8 +47,7 @@ export default function ManageUsersPage() {
     const handleRoleChange = async (userId, currentRole) => {
         const newRole = currentRole === 'admin' ? 'user' : 'admin';
         try {
-            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3100';
-            const res = await fetch(`${serverUrl}/api/admin/users/${userId}/role`, {
+                        const res = await fetch(`/api/backend/admin/users/${userId}/role`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -73,8 +71,7 @@ export default function ManageUsersPage() {
     const handleBanUser = async (userId, currentBanStatus) => {
         const newBanStatus = !currentBanStatus;
         try {
-            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3100';
-            const res = await fetch(`${serverUrl}/api/admin/users/${userId}/ban`, {
+                        const res = await fetch(`/api/backend/admin/users/${userId}/ban`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",

@@ -38,8 +38,8 @@ const nextConfig = {
         destination: `${process.env.SERVER_URL || 'http://localhost:3100'}/api/:path*`,
       },
       {
-        source: '/users',
-        destination: `${process.env.SERVER_URL || 'http://localhost:3100'}/users`,
+        source: '/users/:path*',
+        destination: `${process.env.SERVER_URL || 'http://localhost:3100'}/users/:path*`,
       },
     ];
   },

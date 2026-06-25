@@ -213,8 +213,7 @@ export default function LessonDetailPage() {
       const token = tokenRes?.data?.token;
       if (!token) return;
 
-      const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3100';
-      const res = await fetch(`${serverUrl}/api/reports`, {
+            const res = await fetch(`/api/backend/reports`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

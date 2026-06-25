@@ -25,7 +25,7 @@ async function getMyLessons(userId, headersList) {
     if (!token) return [];
 
     const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
-    const res = await fetch(`${serverUrl}/api/users/${userId}/lessons`, {
+    const res = await fetch(`/api/backend/users/${userId}/lessons`, {
       headers: { "Authorization": `Bearer ${token}` },
       cache: 'no-store'
     });
@@ -52,7 +52,7 @@ async function getMyStats(userId, headersList) {
     if (!token) return null;
 
     const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
-    const res = await fetch(`${serverUrl}/api/users/${userId}/stats`, {
+    const res = await fetch(`/api/backend/users/${userId}/stats`, {
       headers: { "Authorization": `Bearer ${token}` },
       cache: 'no-store'
     });

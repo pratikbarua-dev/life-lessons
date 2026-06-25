@@ -21,8 +21,7 @@ export default function DashboardLayout({ children }) {
           return;
         }
 
-        const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3100';
-        const res = await fetch(`${serverUrl}/api/users/me/status`, {
+                const res = await fetch(`/api/backend/users/me/status`, {
           headers: { "Authorization": `Bearer ${token}` }
         });
         

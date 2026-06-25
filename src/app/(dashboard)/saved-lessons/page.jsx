@@ -23,7 +23,7 @@ async function getSavedLessons(userId, headersList) {
     if (!token) return [];
 
     const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
-    const res = await fetch(`${serverUrl}/api/users/${userId}/favorites`, {
+    const res = await fetch(`/api/backend/users/${userId}/favorites`, {
       headers: { "Authorization": `Bearer ${token}` },
       cache: 'no-store'
     });
