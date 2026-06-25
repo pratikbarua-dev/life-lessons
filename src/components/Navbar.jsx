@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import { Star } from "lucide-react";
 import GooglyEyes from "./GooglyEyes";
 import PenMascot from "./PenMascot";
 import { authClient } from "@/lib/auth-client";
@@ -26,7 +27,7 @@ export default function Navbar() {
     { name: "public lessons", href: "/lessons" },
     { name: "add lesson", href: "/add-lesson" },
     { name: "my lessons", href: "/my-lessons" },
-    { name: "pricing", href: "/pricing" },
+    ...(session?.user?.isPremium ? [] : [{ name: "pricing", href: "/pricing" }]),
   ];
 
   // Variants for the mobile menu container overlay
@@ -83,12 +84,19 @@ export default function Navbar() {
                   <div className="w-28 h-9 bg-[#1C1611]/10 rounded-full border-[2.5px] border-dashed border-[#1C1611]/20 animate-pulse" />
                 </div>
               ) : session?.user ? (
-                <Link
-                  href={dashboardHref}
-                  className="bg-[#FCD34D] text-[#1C1611] font-black text-sm uppercase px-5 py-2.5 rounded-full border-[3px] border-[#1C1611] shadow-[3px_3px_0px_0px_#1C1611] hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 whitespace-nowrap"
-                >
-                  dashboard
-                </Link>
+                <div className="flex items-center gap-3">
+                  {session.user.isPremium && (
+                    <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 bg-[#4DD0B1] text-[#1C1611] border-[2.5px] border-[#1C1611] rounded-full shadow-[2px_2px_0px_0px_#1C1611] text-[10px] font-black uppercase tracking-widest" title="Premium Account">
+                      <Star className="w-3.5 h-3.5 fill-[#1C1611]" /> Premium
+                    </div>
+                  )}
+                  <Link
+                    href={dashboardHref}
+                    className="bg-[#FCD34D] text-[#1C1611] font-black text-sm uppercase px-5 py-2.5 rounded-full border-[3px] border-[#1C1611] shadow-[3px_3px_0px_0px_#1C1611] hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 whitespace-nowrap"
+                  >
+                    dashboard
+                  </Link>
+                </div>
               ) : (
                 <>
                   <Link

@@ -26,6 +26,7 @@ const ADMIN_MENU_GROUPS = [
             { name: "Manage Users", href: "/admin/users", iconName: "users" },
             { name: "System Content", href: "/admin/content", iconName: "content" },
             { name: "Flagged Queue", href: "/admin/queue", iconName: "flag" },
+            { name: "Appeals", href: "/admin/appeals", iconName: "bell" },
         ],
     },
     {
