@@ -15,8 +15,9 @@ async function getLessons(searchParams) {
   // Try to retrieve the user's JWT token on the server
   let token = "";
   try {
+    const cookie = headersList.get('cookie') || '';
     const tokenRes = await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/token`, {
-      headers: headersList,
+      headers: cookie ? { cookie } : {},
       cache: 'no-store'
     });
     if (tokenRes.ok) {

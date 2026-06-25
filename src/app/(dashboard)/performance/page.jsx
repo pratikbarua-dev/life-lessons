@@ -11,8 +11,9 @@ export const metadata = {
 
 async function getStats(userId, headersList) {
   try {
+    const cookie = headersList.get('cookie') || '';
     const tokenRes = await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/token`, {
-      headers: headersList,
+      headers: cookie ? { cookie } : {},
       cache: 'no-store'
     });
     let token = "";

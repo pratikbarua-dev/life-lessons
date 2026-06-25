@@ -21,7 +21,11 @@ async function getAdminData(headersList) {
         const tokenUrl = `${process.env.BETTER_AUTH_URL}/api/auth/token`;
         debug.tokenUrl = tokenUrl;
         
-        const tokenRes = await fetch(tokenUrl, { headers: headersList, cache: 'no-store' });
+        // Next.js 15 returns read-only headers - extract cookie into a plain object
+        const cookie = headersList.get('cookie') || '';
+        const fetchHeaders = cookie ? { cookie } : {};
+        
+        const tokenRes = await fetch(tokenUrl, { headers: fetchHeaders, cache: 'no-store' });
         debug.tokenStatus = tokenRes.status;
         debug.tokenOk = tokenRes.ok;
         

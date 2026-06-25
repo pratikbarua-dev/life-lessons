@@ -10,7 +10,8 @@ export const metadata = {
 
 async function getAdminReports(headersList) {
     try {
-        const tokenRes = await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/token`, { headers: headersList, cache: 'no-store' });
+        const cookie = headersList.get('cookie') || '';
+        const tokenRes = await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/token`, { headers: cookie ? { cookie } : {}, cache: 'no-store' });
         const token = tokenRes.ok ? (await tokenRes.json())?.token : "";
         if (!token) return [];
 
