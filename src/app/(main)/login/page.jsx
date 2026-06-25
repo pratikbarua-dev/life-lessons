@@ -14,11 +14,9 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [name, setName] = useState("");
-
   const handleLogin = async (e) => {
       e.preventDefault();
-      if (!name || !email || !password) {
+      if (!email || !password) {
         setError("Please fill in all fields.");
         return;
       }
@@ -30,12 +28,11 @@ export default function LoginPage() {
         const { data, error: authError } = await authClient.signIn.email({
           email,
           password,
-          name,
           callbackURL: "/home",
         });
         console.log("Login response:", { data, authError });
         if (authError) {
-          setError(authError.message || "Failed to create account.");
+          setError(authError.message || "Failed to sign in.");
         } else {
           router.push("/home");
         }
