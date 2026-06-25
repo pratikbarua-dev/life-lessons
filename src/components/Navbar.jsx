@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { Star } from "lucide-react";
@@ -13,6 +14,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const pathname = usePathname();
   
   const { data: session, isPending } = authClient.useSession();
   const dashboardHref = session?.user?.role === "admin" ? "/admin/dashboard" : "/my-lessons";
@@ -87,15 +89,22 @@ export default function Navbar() {
 
           {/* Desktop Navigation Links */}
           <div className="hidden lg:flex gap-6 items-center h-full">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="font-sans text-sm font-extrabold tracking-tight py-2 px-3 text-[#1C1611] hover:text-[#FF4A3A] hover:bg-[#1C1611]/5 rounded-md transition-all duration-100 uppercase"
-              >
-                {link.name}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href || (link.href !== '/' && pathname?.startsWith(link.href));
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={`font-sans text-sm font-extrabold tracking-tight py-2 px-3 rounded-md transition-all duration-100 uppercase ${
+                    isActive 
+                      ? 'text-[#FF4A3A] bg-[#1C1611]/5' 
+                      : 'text-[#1C1611] hover:text-[#FF4A3A] hover:bg-[#1C1611]/5'
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
           </div>
 
           {/* Desktop Authentication Actions & Mobile Toggle */}
@@ -265,16 +274,23 @@ export default function Navbar() {
             className="fixed inset-0 top-0 left-0 w-full h-screen bg-[#F6F0DD] z-40 lg:hidden flex flex-col justify-center px-6 sm:px-12 pt-24 border-b-[4px] border-[#1C1611]"
           >
             <div className="flex flex-col gap-5 my-auto max-w-md mx-auto w-full">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className="text-2xl font-black uppercase text-[#1C1611] hover:text-[#FF4A3A] transition-colors border-b-2 border-[#1C1611]/20 pb-2"
-                >
-                  {link.name}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href || (link.href !== '/' && pathname?.startsWith(link.href));
+                return (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => setIsOpen(false)}
+                    className={`text-2xl font-black uppercase transition-colors border-b-2 pb-2 ${
+                      isActive 
+                        ? 'text-[#FF4A3A] border-[#FF4A3A]' 
+                        : 'text-[#1C1611] hover:text-[#FF4A3A] border-[#1C1611]/20'
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
 
               <div className="flex flex-col gap-3 mt-6">
                 {isPending ? (
