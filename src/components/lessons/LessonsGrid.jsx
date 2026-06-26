@@ -8,6 +8,7 @@ import { staggerContainer } from "@/lib/animations";
 import LessonCard from "./LessonCard";
 import Link from 'next/link';
 import { useSearchParams } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 
 
@@ -15,8 +16,10 @@ export default function LessonsGrid({ lessons }) {
   const [savedIds, setSavedIds] = useState([]);
   const searchParams = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "1");
-const LESSONS_LIST = lessons?.lessons || [];
-console.log("Lessons data:", lessons);
+  const LESSONS_LIST = lessons?.lessons || [];
+  
+  const { data: session } = authClient.useSession();
+
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.05,
@@ -29,12 +32,60 @@ console.log("Lessons data:", lessons);
     setIsNavigating(false);
   }, [searchParams]);
 
-  const toggleBookmark = (id, e) => {
+  // Fetch initial favorites
+  useEffect(() => {
+    const fetchFavorites = async () => {
+        if (!session?.user?.id) return;
+        try {
+            const tokenRes = await authClient.token();
+            const token = tokenRes?.data?.token;
+            if (!token) return;
+            
+            const res = await fetch(`/api/backend/users/${session.user.id}/favorites`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (data.success && data.data) {
+                setSavedIds(data.data.map(fav => fav.lessonId || fav.lessonDetails?._id));
+            }
+        } catch (err) {
+            console.error("Failed to fetch favorites", err);
+        }
+    };
+    fetchFavorites();
+  }, [session]);
+
+  const toggleBookmark = async (id, e) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    if (!session?.user?.id) return;
+
+    // Optimistic UI update
     setSavedIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
+
+    try {
+      const tokenRes = await authClient.token();
+      const token = tokenRes?.data?.token;
+      if (!token) return;
+
+      await fetch(`/api/backend/favorites/toggle`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ userId: session.user.id, lessonId: id })
+      });
+    } catch (err) {
+      console.error("Failed to toggle bookmark", err);
+      // Rollback on error
+      setSavedIds((prev) =>
+        prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      );
+    }
   };
 
   return (
