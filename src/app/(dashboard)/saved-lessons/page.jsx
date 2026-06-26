@@ -32,11 +32,18 @@ async function getSavedLessons(userId, headersList) {
     const data = await res.json();
     if (!data.success) return [];
     // The aggregation returns objects with a nested lessonDetails field
-    return (data.data || []).map(fav => ({
-      ...fav.lessonDetails,
-      savedAt: fav.savedAt,
-      favoriteId: fav._id,
-    }));
+    return (data.data || []).map(fav => {
+      const details = fav.lessonDetails || {};
+      const creator = details.creator || {};
+      
+      return {
+        ...details,
+        authorName: creator.name || "Unknown",
+        authorImage: creator.image || creator.photoURL || null,
+        savedAt: fav.savedAt,
+        favoriteId: fav._id,
+      };
+    });
   } catch (err) {
     console.error("Error fetching saved lessons:", err);
     return [];
