@@ -1,37 +1,124 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 📚 Digital Life Lessons
 
-## Getting Started
+**Preserve your wisdom, document your blueprint, and share life lessons for future generations.**
 
-First, run the development server:
+Digital Life Lessons is a full-stack platform that allows users to write, publish, and monetize their personal experiences and life lessons. It features a unique, high-quality **Neo-Brutalist** design system with fluid animations, glassmorphism elements, and highly interactive user interfaces.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🌟 Key Features
+
+- **Dynamic Feed & Filtering:** Explore community lessons filtered by categories, emotional tones, and popularity.
+- **Premium Content Monetization:** Native Stripe integration allows users to upgrade to premium accounts, unlocking exclusive lessons and detailed analytics.
+- **Robust Authentication:** Secure JWT-based authentication using **Better-Auth** (supports both local credentials and Google OAuth).
+- **Interactive Dashboards:**
+  - **User Dashboard:** Manage drafts, track lesson engagement metrics (views/likes), and view saved bookmarks.
+  - **Admin Control Center:** Global oversight of platform health, user roles, content moderation queue, and system analytics via professional interactive charts.
+- **Community Interaction:** Like, comment, share, and bookmark favorite lessons.
+- **Neo-Brutalist UI:** A distinct, professional design language featuring bold borders, high-contrast colors, floating animations (`framer-motion`), and tactile interactive states.
+
+---
+
+## 🛠 Tech Stack
+
+The application is split into a separated Client and Server architecture.
+
+### Client (Frontend)
+- **Framework:** Next.js 15 (App Router)
+- **Styling:** TailwindCSS v4 with custom neo-brutalist utility classes
+- **UI & Animations:** Framer Motion, DaisyUI, Lucide React icons
+- **Data Visualization:** Recharts
+- **Forms & Interactions:** React Toastify for notifications, custom hooks for seamless pagination and filtering.
+
+### Server (Backend)
+- **Framework:** Node.js / Express.js
+- **Database:** MongoDB (Native Driver)
+- **Authentication:** Better-Auth, `jose` for secure JWT verification and decoding
+- **Payments:** Stripe SDK for handling premium subscription checkouts
+- **Security:** Custom modular middleware for JWT validation, role-based access control (Admin vs. User), and account ban checks.
+
+---
+
+## 📂 Project Architecture
+
+```text
+life-lessons/
+├── client/                 # Next.js Frontend Application
+│   ├── src/app/            # App Router (Pages & Layouts)
+│   ├── src/components/     # Reusable UI Components & Sections
+│   ├── src/lib/            # Utility functions, animations, auth-client
+│   └── package.json
+└── Server/                 # Express.js Backend API
+    ├── config/             # DB Connection Logic
+    ├── controllers/        # Stripe & Payment Webhooks
+    ├── middlewares/        # Security, JWT, and Role Guards
+    ├── routes/             # API Endpoints (users, lessons, admin, etc.)
+    └── index.js            # Entry Point
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 🚀 Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Prerequisites
+- Node.js v18+
+- MongoDB instance (Atlas or local)
+- Stripe Developer Account (for payments)
+- Google Cloud Console (for OAuth credentials)
 
-## Learn More
+### 1. Environment Configuration
 
-To learn more about Next.js, take a look at the following resources:
+You'll need `.env` files in both the `client` and `Server` directories.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Client (`client/.env`):**
+```env
+BETTER_AUTH_SECRET=your_auth_secret
+BETTER_AUTH_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=your_google_id
+GOOGLE_CLIENT_SECRET=your_google_secret
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_pub_key
+STRIPE_SECRET_KEY=your_stripe_secret
+JWT_SECRET=your_jwt_secret
+SERVER_URL=http://localhost:3100
+NEXT_PUBLIC_IMGBB_API_KEY=your_imgbb_key
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Server (`Server/.env`):**
+```env
+PORT=3100
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+STRIPE_SECRET_KEY=your_stripe_secret
+CLIENT_URL=http://localhost:3000
+```
 
-## Deploy on Vercel
+### 2. Installation & Running
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Start the Backend Server:**
+```bash
+cd Server
+npm install
+npm start
+```
+*The server will run on http://localhost:3100*
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# life-lessons
+**Start the Frontend Client:**
+```bash
+cd client
+npm install
+npm run dev
+```
+*The client will run on http://localhost:3000*
+
+---
+
+## 🛡️ Security & Roles
+- **Guest:** Can view public lessons (limited description for premium content).
+- **Authenticated User:** Can create lessons, save bookmarks, like, comment, and appeal bans.
+- **Premium User:** Has unrestricted access to all Premium lessons.
+- **Admin:** Has full access to the Admin Control Center, can change user roles, feature lessons, delete content, and moderate reports.
+
+---
+
+## 📄 License
+This project is open source and available under the ISC License.
